@@ -29,7 +29,7 @@ Table of contents
 
 ## Setup
 
-This repository Contains all the useful files to run the script that i produced for this assignment.
+This repository Contains all the useful files to run the scripts that i produced for this assignment.
 To try it, it is sufficient to clone this repository in your ROS workspace: 
 
 ```bash
