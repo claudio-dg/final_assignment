@@ -61,7 +61,7 @@ To run the teleop_Twist_keyboard node and my scripts produced for this assignmen
 
 ### How to use: ###
 After having launched all the required launch files Gazebo and Rviz environments will open, along with 3 different terminals:
-* Input Console : in which you can select what to do and that will show the following user interface:
+* ```Input Console``` : in which you can select what to do and that will show the following user interface:
 ```bash
 ***********THIS IS THE INPUT CONSOLE***********
 
@@ -73,8 +73,8 @@ ENTER '3' to manually drive the robot WITH assisted collision avoidance
 ENTER 'q' to terminate this node
 ```
 
-* Controller Console : that will show some useful real-time info depending on the modality selected in the input console, such as the elapsed time since the goal was given or some notifications to inform the user tha a certain direction will probably cause a collision.
-* TeleopTwist Keyboard Console : in which the user can insert commands to manually drive the robot that will only be read if modality 2) or 3) were previously selected through the input console. 
+* ```Controller Console``` : that will show some useful real-time info depending on the modality selected in the input console, such as the elapsed time since the goal was given or some notifications to inform the user tha a certain direction will probably cause a collision.
+* ```TeleopTwist Keyboard Console``` : in which the user can insert commands to manually drive the robot that will only be read if modality 2) or 3) were previously selected through the input console. 
 
 ## Gazebo and Rviz Maps
 
