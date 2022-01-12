@@ -2,8 +2,7 @@ Research Track Final Assignment
 ================================
 
 This repository contains the result of my personal work for the final Assignment of the course.
-The goal of this assignment is to Develop a software architecture for the control of the robot in the environment. The software will rely on the move_base
-and gmapping packages for localizing the robot and plan the motion.
+The goal of this assignment is to Develop a software architecture for the control of the robot in the environment. The software relies on the move_base and gmapping packages for localizing the robot and plan the motion.
 The architecture should be able to get the user request, and let the robot execute one of the following behaviors
 (depending on the user’s input):
 
