@@ -70,7 +70,7 @@ The environment used for this assignment consists in the map illustrated (froma 
 Rviz instead gives another point of view of the same environment, that is from robot sensors' point of view: the robot, in fact, does not know from the beginning the full map he's in, but thanks to the laser sensors and the ```gmapping``` package he is capable of creating it.
 
 <p align="center">
-<img src="https://github.com/claudio-dg/final_assignment/blob/main/images/Rviz.png?raw=true" width="450" height="250"/>
+<img src="https://github.com/claudio-dg/final_assignment/blob/main/images/Rviz.png?raw=true" width="400"/>
 <p>
 	
 ## Project structure and behaviour description
