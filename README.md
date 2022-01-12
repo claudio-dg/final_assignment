@@ -26,8 +26,6 @@ Table of contents
 * [Project structure and behaviour description](#project-structure-and-behaviour-description)
 * [PseudoCode](#pseudocode)
 
-* [](#)
-
 
 ## Setup
 
@@ -59,23 +57,6 @@ $ roslaunch final_assignment my_scripts.launch
 ```
 To run the teleop_Twist_keyboard node and my scripts produced for this assignment.
 
-### How to use: ###
-After having launched all the required launch files Gazebo and Rviz environments will open, along with 3 different terminals:
-* ```Input Console``` : in which you can select what to do and that will show the following user interface:
-```bash
-***********THIS IS THE INPUT CONSOLE***********
-
-Which Action do you want to use to move the robot?
-ENTER 'c' to cancel last given goal
-ENTER '1' to send a new goal to the robot
-ENTER '2  to manually drive the robot
-ENTER '3' to manually drive the robot WITH assisted collision avoidance
-ENTER 'q' to terminate this node
-```
-
-* ```Controller Console``` : that will show some useful real-time info depending on the modality selected in the input console, such as the elapsed time since the goal was given or some notifications to inform the user tha a certain direction will probably cause a collision.
-* ```TeleopTwist Keyboard Console``` : in which the user can insert commands to manually drive the robot that will only be read if modality 2) or 3) were previously selected through the input console. 
-
 ## Gazebo and Rviz Maps
 
 The environment used for this assignment consists in the map illustrated (froma Gazebo view) in the following image:
@@ -102,46 +83,33 @@ The ROS package of the project is called ```"final_assignment"```, it exploits t
 In addition to this i created two nodes contained in ```src``` folder named ```InputConsole``` and ```controller```; as the name suggests the first one is encharged of taking user's inputs to select the desired behaviour of the robot, while the second one manages the consequences of user's request by communicating with other nodes, for instance by sending the goal coordinates to ```move_base/goal``` with a msg of type :```move_base_msgs/MoveBaseActionGoal```.
 The communication between this two nodes is implemented through a publish/subscribe structure using two different topics ```MY_topic_teleop```  & ```MY_topic_send_goal```: in this way I made a structure in which the input given by the user determines which callback is going to be called in the controller node, so that the "async structure" required by this assignment was possible.
 	
-	
-Regarding points 2) and 3) of the assignment I remapped an already existing topic (```teleop_twist_keyboard```) so that instead of publishing directly on ```cmd_vel" it publishes on my personal topic ```myRemapped_cmd_vel```: by doing this I manage to consider the velocities published by this topic only when required, that is when the user selected mode 2) or 3), furthermore it allowed me to add the collision avoidance functionality needed for the third part of the assignment.
- 1. **/world** : 
- - which was already given and sets the simulation environment. As we can see from the image it publishes on the topic ```/base_scan``` with information regarding robot's lasers scan, and is subscribed to ```/cmd_vel``` topic so that it can receive msgs to set the robot' speed.
-2. **/controller_node**	:
-- It subscribes to the ```/base_scan``` topic for havig instant information about the environment sorrounding the robot. Then it also implements the server of the custom service **```"/UpdateVel```"** (that simply takes a float value as input and has no response values) for being able of receiving the velocity changes required from the user via input. In the end it publishes robot's speed on the ```/cmd_vel``` topic.
-3. **/server_node** :	
-- It implements the server of the **custom service ```"/ChangeVel"```** that receives a "char" as input and returns a float value, that is the variation of speed required from that specific input (e.g. 'i' corresponds to +0.5).
-4. **/console_node** :	
-- This is the input console which subscribes to the ```/base_scan``` topic (*); it calls the custom service ```/ChangeVel``` giving as input the command received from the user, then it communicates the response to the controller node by calling the other custom service ```/UpdateVel``` as previously said, accordingly to the client-server model.
-
-(*) ```REMARK``` : this subscription was simply made for having a continuous callback: it is not actually interested in the messages published in there, but it just uses it as an infinite while loop. 
+- Regarding point 1) I used the ```\move_base\feedback``` topic to retreive information about robot's status such as the current position or the time counter: thanks to these two pieces of information I implemented an algorithm to state whether the goal was reached or not (considering an approximation error due to the fact that the robot seemed to get really close to the goal but never reaching its exact coordinates), and a TIMEOUT, so that if the robot doesen't reach the goal in Time it is considered unreachable and will be canceled by sending a msg to ```\move_base\cancel``` topic
+		
+- Regarding points 2) and 3) of the assignment I remapped an already existing topic (```teleop_twist_keyboard```) so that instead of publishing directly on ```cmd_vel``` it publishes on my personal topic ```myRemapped_cmd_vel```: by doing this I manage to consider the velocities published by this topic only when required, that is when the user selected mode 2) or 3), furthermore it allowed me to add the collision avoidance functionality needed for the third part of the assignment. 
 
 
  ### Behaviour description  : ### 
- 
- After running the ROS launchFile the whole project begins to work.
- - First it will open the simulation environment that represents Monza's Circuit:
- 
- <p align="center">
-<img src="https://github.com/claudio-dg/second_assignment/blob/main/images/Monza_circuit.png?raw=true" width="800"  />
-<p>
-	
-	
- - Then it will run the  ```controller```  : it will make the robot start moving along the circuit with a constant linear velocity, only modyfing it in case of curves for avoiding crashes: when an "obstacle" is met the robot slows down a bit, and it steers in the opposite way of where the nearest wall is with a certain angular velocity, that allows to simulate the real behaviour of a car running in the circuit. When a variation of speed is received (that is when the custom service ```/UpdateVel``` is called), the controller modifies the linear velocity of the robot, also setting it to zero if the user wanted to stop the robot. Note that Robot's velocity won't go under 0: this to avoid the robot going bacwards and crashing.
 
-- On a second terminal the ```server``` starts running: it does nothing until someone (that is the ```input_console```) calls the service ```/ChangeVel```, in that case it will answer with the increment of speed required :+0.5 or -0.5 in case of increment and decrement, -1 in case of 'stop' (this is just a flag to notify that the speed must go to zero). In case of Reset it is encharged of calling an already given service ```/reset_position```, which sets the  robot to the starting position. In this project the reset only changes the position and not the speed, so if you want the robot to stand still in the starting position you'll first have to stop it and then reset. This terminal also prints the command received, so it can be used to have an history of the commands received from the user.
-	
-- Another terminal will be opened for the  ```input_console```: it will show to the user the commands that he can write, that is:
-	* ```r``` to RESET the robot's position
-	* ```s``` to STOP the robot
-	* ```i``` to INCREASE velocity
-	* ```d``` to DECREASE velocity
-	
-This node does nothing until the user inserts an input: in that case it calls the ```/ChangeVel``` service (**) putting the input in the request, to receive the corresponding value of speed variation as response; in the end it will communicate this response to the controller by calling the ```/UpdateVel``` service to actually modify the current speed.
+After having launched all the required launch files Gazebo and Rviz environments will open, along with 3 different terminals:
+* ```Input Console``` : in which you can select what to do and that will show the following user interface:
+```bash
+***********THIS IS THE INPUT CONSOLE***********
+
+Which Action do you want to use to move the robot?
+ENTER 'c' to cancel last given goal
+ENTER '1' to send a new goal to the robot
+ENTER '2  to manually drive the robot
+ENTER '3' to manually drive the robot WITH assisted collision avoidance
+ENTER 'q' to terminate this node
+```
+
+* ```Controller Console``` : that will show some useful real-time info depending on the modality selected in the input console, such as the elapsed time since the goal was given or some notifications to inform the user tha a certain direction will probably cause a collision.
+* ```TeleopTwist Keyboard Console``` : in which the user can insert commands to manually drive the robot that will only be read if modality 2) or 3) were previously selected through the input console. 
  
-(**) ```REMARK``` : This service ```/ChangeVel``` could be avoided and I could basically have the same behaviour just by making the mapping of the commands directly within the input_console , nevertheless I decided to implement it this way in order to better understand the mechanisms of services and to give more modularity to the project.
+
 	
 	
- ## Code explanation
+ ## Pseudocode
  
  To reproduce the behaviour previously described i wrote 3 C++ programms contained in the ```src``` folder:
  - controller.cpp 
