@@ -2,12 +2,18 @@ Research Track Final Assignment
 ================================
 
 This repository contains the result of my personal work for the final Assignment of the course.
-The goal of this assignment is to obtain a simulation in which a robot:
+The goal of this assignment is to Develop a software architecture for the control of the robot in the environment. The software will rely on the move_base
+and gmapping packages for localizing the robot and plan the motion.
+The architecture should be able to get the user request, and let the robot execute one of the following behaviors
+(depending on the user’s input):
 
-1. constantly drives around Monza's circuit.
-2. provides a node which interacts with the user to increase/decrease the speed and reset the position of the robot.
+1. autonomously reach a x,y coordinate inserted by the user.
+2. let the user drive the robot with the keyboard
+3. let the user drive the robot assisting them to avoid collisions
+4. in addition we could add the functionality of manually canceling a given goal
 
-To do this we had to use ROS for controlling the robot and I used C++ as programming language.
+To do this we had to use ROS for controlling the robot and Gazebo and RViz environments.
+I decided to use C++ as programming language.
 
 
 
@@ -15,9 +21,10 @@ Table of contents
 ----------------------
 
 * [Setup](#setup)
+* [Gazebo and Rviz Maps](#gazebo-and-rviz-maps)
 * [Project structure and behaviour description](#project-structure-and-behaviour-description)
 * [PseudoCode](#pseudocode)
-* [](#)
+
 * [](#)
 
 
@@ -52,17 +59,28 @@ $ roslaunch final_assignment my_scripts.launch
 To run the teleop_Twist_keyboard node and my scripts produced for this assignment.
 
 
+## Gazebo and Rviz Maps
 
+The environment used for this assignment consists in the map illustrated (froma Gazebo view) in the following image:
 
+<p align="center">
+<img src="" width="900" />
+<p>
+
+Rviz instead gives another point of view of the same environment, that is from robot sensors' point of view: the robot, in fact, does not know from the beginning the full map he's in, but thanks to the laser sensors and the ```gmapping``` package he is capable of creating it.
+	
 ## Project structure and behaviour description
 
-The project is based on the ROS scheme that is shown in the following image:
+The project is based on the ROS scheme that is shown in the following graph:
 
 <p align="center">
 <img src="https://github.com/claudio-dg/final_assignment/blob/main/images/final_assign_rosgraph.png?raw=true" width="900" height="200" />
 <p>
  
-The ROS package of the project is called ```"second_assignment"```, it exploits two already given topics(```/cmd_vel```,```/base_scan```), two custom services (```/ChangeVel``` ,```UpdateVel```)  and four main nodes:
+The ROS package of the project is called ```"final_assignment"```, it exploits two already given packages: ```slam_gmapping```, which open the environment and allows the to create a map of what sorrounds him, and ```move_base```, which requires a goal to be sent to the 
+topic ```move_base/goal``` in order to make the robot move towards it.
+In addition to this i created two nodes contained in ```src``` folder named ```InputConsole``` and ```controller```; as the name suggests the first one is encharged of taking user's inputs to select the desired behaviour of the robot, while the second one manages the consequences of user's request by communicating with other nodes, for instance by sending the goal coordinates to ```move_base/goal``` with a msg of type :```move_base_msgs/MoveBaseActionGoal```.
+The communication between this two node is implemented through a publish/subscribe structure using two different topics ```MY_topic_teleop```  & ```MY_topic_send_goal```: in this way I made a structure in which the input given by the user determines which callback is going to be called in the controller node, so that the "async structure" required by this assignment was possible.
  1. **/world** : 
  - which was already given and sets the simulation environment. As we can see from the image it publishes on the topic ```/base_scan``` with information regarding robot's lasers scan, and is subscribed to ```/cmd_vel``` topic so that it can receive msgs to set the robot' speed.
 2. **/controller_node**	:
