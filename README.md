@@ -63,7 +63,7 @@ To run the teleop_Twist_keyboard node and my scripts produced for this assignmen
 
 The environment used for this assignment consists in the map illustrated (froma Gazebo view) in the following image:
 
-<p align="center">
+<p>
 <img src="https://github.com/claudio-dg/final_assignment/blob/main/images/Gazebo.png?raw=true" width="450" />
 <p>
 
