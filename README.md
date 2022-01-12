@@ -111,204 +111,146 @@ ENTER 'q' to terminate this node
 	
  ## Pseudocode
  
- To reproduce the behaviour previously described i wrote 3 C++ programms contained in the ```src``` folder:
- - controller.cpp 
- - server.cpp
+ To reproduce the behaviour previously described i wrote 2 C++ programms contained in the ```src``` folder:
  - input_console.cpp
+ - controller.cpp 
+
+### Input_console.cpp  : ###
+
+
+```bash
+initialize node
+initialize necessary publishers and subscribers
+Use continuous callback from clock topic
+	
+	print User Interface menu
+	wait for a keyboard input and put it into a variable "input"
+	switch(input)
+	    case 'c':
+	    	publish on move_base/cancel topic to cancel last given goal
+		publish a flag msg on MY_topic_send_goal to reset variables in controller
+		print that goal has been canceled
+		break;
+	    case '1':
+		print autonomous driving introduction
+                ask for goal coordinates
+	    	read goal coordinates from the user
+                publish them on MY_topic_send_goal topic to notify the controller
+		print sent coordinates
+	    	break;
+	    case '2':
+	    	print manual driving introduction
+		print a message to tell the user to look at teleopkeyboard console
+		publish a boolean msg equal to 0 on MY_topic_teleop to inform the controller that manual driving was selected
+		break;           
+	    case '3':
+	    	print ASSISTED manual driving introduction
+		print a message to tell the user to look at teleopkeyboard console
+		publish a boolean msg equal to 1 on MY_topic_teleop to inform the controller that ASSISTED manual driving was selected
+		break;
+	    case 'q':
+		print an exiting message
+		exit the program
+	    default:
+	    	print an error for a wrong command inserted
+	    	break;
+	
+```
 	
 ### Controller.cpp  : ###	
 
- The ```main``` of this script is simply the following:
 ```bash
-int main (int argc, char **argv)
-{ 
-ros::init(argc, argv, "controller"); 
-ros::NodeHandle nh;
-ros::Subscriber sub = nh.subscribe("/base_scan", 1, LasersCallback); 
-pub = nh.advertise<geometry_msgs::Twist> ("/cmd_vel", 1);
-ros::ServiceServer service= nh.advertiseService("/updatevel", Servicecallback);
-ros::spin();
-return 0;
-}
-```
-Here we the have initialization of the node and the susbcription to the  topic ```/base_scan```, along with the definition of the publisher on ```/cmd_vel``` topic and of the server for the ```/UpdateVel``` service . 
-I had to implement two different callback functions: ```LasersCallback``` &  ```Servicecallback```.
-
-The first one is based on feedbacks received from robot'lasers:
-```bash
-void LasersCallback(const sensor_msgs::LaserScan::ConstPtr& msg)
-{
- for(int i=0; i<=720;i++)
- {
-  ranges_array[i] = msg->ranges[i]; 
- }
- float right_dist = GetMinDistance(20,120, ranges_array);
- float left_dist = GetMinDistance(600,700, ranges_array);
- float frontal_dist = GetMinDistance(300,420,ranges_array);
-//if close to a FRONTAL wall
- if(frontal_dist<1.5) 
- {
- 	if(right_dist<left_dist) 
- 	 Turn_left();
- 	else
- 	 Turn_right();
- }
-	else 
- 	Move_forward();
- pub.publish(my_vel); 
- if(previous_vel != my_vel.linear.x){
- system("clear");
- printf("\n velocita attuale e'  %f  [variazione totale = %f]\n", my_vel.linear.x, variation );
- printf("\n velocita angolare attuale e'  %f\n", my_vel.angular.z );
- previous_vel = my_vel.linear.x;
- }
-}
-```
-It is a pretty simple function that takes information from laser scanners by reading their ```ranges[]``` parameter, and checks for the closest wall in 3 different directions with an algorithm similar to the one of the first assignnment. I divided the range of detection in 3 parts: one for the front side of the robot and the others for its left and right; this function calculates the minimum distance to a wall for each part thanks to a function that i called ```GetMinDistance``` which is defined as follows:
+initialize node
+initialize necessary publishers and subscribers
+print controller console introduction	
+	//the MAIN loops with ros::SpinOnce whilethe program isn't killed
+	//check for global flag values
 	
-```bash
- float GetMinDistance(int min_index,int max_index, float ranges_array[])
-{
-	float min_distance = 999;
-	for(int i = min_index; i <= max_index; i++)
-	{
-		if(ranges_array[i] < min_distance)
-			min_distance = ranges_array[i];
-	}
-	return min_distance;
-}
-```
- After doing this the robot moves forward if there are no walls in front of him. otherwise it curves a bit towards the opposite direction of the closest wall: in order to do this movement i had to publish a message on ```cmd_vel``` topic after having modified the values in these ways:
-```bash
-	void Move_forward()
-{
-	my_vel.linear.x = STARTING_VEL + variation; 
-	my_vel.angular.z = 0;
-}
-```
+	if user asked for manual drive
+		take velocity from teleopKeyboard contained into myRemapped_cmd_vel topic
+		publish it on cmd_vel topic to make the robot move
+	if user asked for ASSISTED manual drive
+		call assistedMovement function**
+	if user didn't ask for these 2 modalities, wait for other callbacks to be called
 	
-```bash
-	void Turn_left()
-{	
-	my_vel.linear.x = 0.8;
- 	my_vel.angular.z = 2;
-}
-```
- Notice that when moving forward the robot has an additional component called "variation": this is the value that is going to be modified through the call to the ```/UpdateVel``` service, and that will modify the current velocity according to user's inputs.
+	//**assitedMovement function:
+		check distances received from laser sensors
+		if there is an obstacle in front of the robot
+			check for nearest obstacles at his sides
+			if nearest obstacle is at his right
+				turn left a bit
+				print feedback to the user
+			if nearest obstacle is at his left
+				turn right a bit
+				print feedback to the user
+			set flag changedVel to 1 to state that the direction has been modified
+			sleep 0.3 seconds
+		if the direction has been modified
+			stop the robot
+		else
+			clear the console
+			take velocity from teleopKeyboard contained into myRemapped_cmd_vel topic
+			publish it on cmd_vel topic to make the robot move
 	
-So the Callback to this specific service is the following and will simply modify this "variation" value: in addiction to the update of the "variation" variable it only has one "if statement" that makes the robot stop in case the user wrote 's' (that corresponds to the -1 flag value) or in case the total variation would cause the robot to move backwards.
- ```bash
-bool Servicecallback (second_assignment::UpdateVel::Request &req, second_assignment::UpdateVel::Response &res)
-{
- variation = variation + req.value;
+//basing on which msg is received from input cosole, different callbacks are executed
+	if 'c' or '1' were inserted in input cosole  "myCallback" is executed
+		
+		reset manual drive global flag value
+		put goal coordinates in a global variable
+		if msg contains flag value for "goal canceled"
+			clear the terminal
+			print that goal has been canceled
+			set "canceled" global flag value to 1
+		else
+			reset global flags variables
+			publish goal on  move_base/goal topic
+			print that goal has been published
+	return
 	
- if(variation < -STARTING_VEL or req.value == -1 )
- {
-  variation = -STARTING_VEL; //the robot stands still
- }
-return true;
-}
-```
-
-### Server.cpp  : ###
-Within the ```main``` of this script we have again the initialization of the node and of the server for the ```/changevel``` service this time:
-			     			     
-```bash
-int main(int argc, char **argv)
-{
-//initalizing the node and the Service
-ros::init(argc, argv, "my_server");
-ros::NodeHandle n;
-ros::ServiceServer service= n.advertiseService("/changevel", Mycallback);
-
-ros::spin();
-return 0;
-}
-```
-The callback of this service (named ```Mycallback```) simply contains a "Switch" statement that, based on the "char" value received as request from the service, puts the correct "float" value in the response, and in case of 'r', calls the already given ```/reset_position``` service through the ```ros::service::call``` 		     
-			     
-```bash
-bool Mycallback (second_assignment::ChangeVel::Request &req, second_assignment::ChangeVel::Response &res)
-{
-char given_input = req.input;
-switch(given_input)
-{ 
- case 'r' : //reset -> call /reset_positions service
- 	ros::service::call("/reset_positions", my_reset);
- 	ROS_INFO("RESET RECEIVED");
- 	res.change_value = 0; 
- 	break;
- 	
- case 's' : //stop -> stop the robot
- 	ROS_INFO("STOP RECEIVED");
- 	res.change_value = -1; 
- 	break;	
- 	
- case 'i' :  //increase -> set the response of the service as +0.5
- 	ROS_INFO("INCREASE RECEIVED");
- 	res.change_value = +0.5;  	
- 	break;
- 	
- case 'd' : //decrease -> set the response of the service as -0.5
- 	ROS_INFO("DECREASE RECEIVED");
- 	res.change_value = -0.5;
- 	break;
- 	
- default :
- 	ROS_INFO("WRONG COMMAND");
- 	res.change_value = 0;
- 	break;
-}
-return true;
-}
-```
- ### Input_console.cpp  : ###
-
-The last script is the one that takes input from the user, its main contains the node initialization, the subsciber to ```/base_scan``` topic (used for having a loop as previously said), and the definition of two clients for the two custom services: this way it is capable of calling both of them when required, that is when the user inserts a command in the terminal.
+	if '2' or '3' were inserted in input cosole "TeleopCallback" is executed
+		
+		put msg's boolean value in the global flag variable "manualdrive"
+		cancel possibly existing goals
+		reset velocities to 0
+		if msg asked for manual drive
+			print manual driving introduction
+			print a message to tell the user to look at teleopkeyboard console
+		else if msg asked for ASSISTED manual drive
+			print ASSISTED manual driving introduction
+			print a message to tell the user to look at teleopkeyboard console
 	
-```bash	
-//starting global definitions 
-ros::ServiceClient client1;
-ros::ServiceClient client2;
-second_assignment::ChangeVel change_vel;
-second_assignment::UpdateVel up_vel;
+//last 2 callbacks (myCmdCallback & CurrentPositionCallback) are called respectively when user inserts command on teleopKeyboard console and when the robot status changes
+	
+	//myCmdCallback
+	put the received vel in a global variable
+	reset changedVel flag each time a new command is inserted
 	
 	
-int main (int argc, char **argv)
-{
-ros::init(argc, argv, "console");
-ros::NodeHandle nh;
+	//CurrentPositionCallback
+	execute the callback only if goal wasn't reached yet (goal_reached==0)
+	take current position coordinates from /move_base/feedback topic
+	if the status has changed just now (firstTime==1)
+		take current time as Starting time
+		reset firdttime flag value
+	keep updating current time
+	compute elapsed time since the goal was given
+	print info about goal coordinates and time elapsed
+	compute Error between current position and Goal position
+	if error is small enough
+		set goal_reached flag to TRUE
+	if the timeout is over and the goal hasn't been reached
+		cancel the goal 
+		print that goal has been canceled
+	else if  goal has been reached before timeout was over
+		clear console
+		print that goal was reached
+```
 
-ros::Subscriber sub = nh.subscribe("/base_scan", 1, myCallback);
-client1 = nh.serviceClient<second_assignment::ChangeVel>("/changevel"); 
-client2 = nh.serviceClient<second_assignment::UpdateVel>("/updatevel"); 
 
-ros::spin();
-return 0;
-}
-```	
-So "myCallback" as first shows to the user which commands are accepted, then starts waiting for an input with a ```scanf()``` : only when the user presses something on the keyboard this function calls the ```/ChangeVel``` service to receive the corresponding float value to that command, then it calls the ```/UpdateVel``` for notifying the ```Controller``` of the user's request and to actually modify the current speed.
 
-```bash
-void myCallback(const sensor_msgs::LaserScan::ConstPtr& msg)
-{
- printf("--- \n PRESS 'r' to reset the robot to the starting position \n PRESS 's' to stop the robot   \n PRESS 'i' to increase velocity  \n PRESS 'd' to decrease velocity \n--- \n");
- scanf(" %c", &input);
- system("clear");
-
- change_vel.request.input = input;
- client1.waitForExistence(); 
- client1.call(change_vel);
  
- float resp = change_vel.response.change_value;
- up_vel.request.value = resp;
- client2.waitForExistence(); 
- client2.call(up_vel);
-}	
-```
- * REMARK: within the .cpp files contained in the ```src``` you'll find the whole code introduced in this ```README``` wiht all the "#include" used along with futher explanations through comments in which, for example, I explain more in details the inputs and otputs of every function.
-I decided to remove the major part of the comments from the bodies of the functions reported in this README in order to avoid weighting too much its reading.
- 
+
+
  
 	
 
