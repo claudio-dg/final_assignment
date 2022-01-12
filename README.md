@@ -10,7 +10,8 @@ The architecture should be able to get the user request, and let the robot execu
 1. autonomously reach a x,y coordinate inserted by the user.
 2. let the user drive the robot with the keyboard
 3. let the user drive the robot assisting them to avoid collisions
-4. in addition we could add the functionality of manually canceling a given goal
+4. autonomously cancel a goal if it is not reachable using a timeout
+5. in addition we could add the functionality of manually canceling a given goal
 
 To do this we had to use ROS for controlling the robot and Gazebo and RViz environments.
 I decided to use C++ as programming language.
@@ -58,6 +59,22 @@ $ roslaunch final_assignment my_scripts.launch
 ```
 To run the teleop_Twist_keyboard node and my scripts produced for this assignment.
 
+### How to use: ###
+After having launched all the required launch files Gazebo and Rviz environments will open, along with 3 different terminals:
+* Input Console : in which you can select what to do and that will show the following user interface:
+```bash
+***********THIS IS THE INPUT CONSOLE***********
+
+Which Action do you want to use to move the robot?
+ENTER 'c' to cancel last given goal
+ENTER '1' to send a new goal to the robot
+ENTER '2  to manually drive the robot
+ENTER '3' to manually drive the robot WITH assisted collision avoidance
+ENTER 'q' to terminate this node
+```
+
+* Controller Console : that will show some useful real-time info depending on the modality selected in the input console, such as the elapsed time since the goal was given or some notifications to inform the user tha a certain direction will probably cause a collision.
+* TeleopTwist Keyboard Console : in which the user can insert commands to manually drive the robot that will only be read if modality 2) or 3) were previously selected through the input console. 
 
 ## Gazebo and Rviz Maps
 
@@ -81,10 +98,12 @@ The project is based on the ROS scheme that is shown in the following graph:
 <img src="https://github.com/claudio-dg/final_assignment/blob/main/images/final_assign_rosgraph.png?raw=true" width="900" height="200" />
 <p>
  
-The ROS package of the project is called ```"final_assignment"```, it exploits two already given packages: ```slam_gmapping```, which open the environment and allows the to create a map of what sorrounds him, and ```move_base```, which requires a goal to be sent to the 
-topic ```move_base/goal``` in order to make the robot move towards it.
+The ROS package of the project is called ```"final_assignment"```, it exploits two already given packages: ```slam_gmapping```, which opens the environment and allows the robot to create a map of what sorrounds him, and ```move_base```, which requires a goal to be sent to the topic ```move_base/goal``` in order to make the robot move towards it.
 In addition to this i created two nodes contained in ```src``` folder named ```InputConsole``` and ```controller```; as the name suggests the first one is encharged of taking user's inputs to select the desired behaviour of the robot, while the second one manages the consequences of user's request by communicating with other nodes, for instance by sending the goal coordinates to ```move_base/goal``` with a msg of type :```move_base_msgs/MoveBaseActionGoal```.
-The communication between this two node is implemented through a publish/subscribe structure using two different topics ```MY_topic_teleop```  & ```MY_topic_send_goal```: in this way I made a structure in which the input given by the user determines which callback is going to be called in the controller node, so that the "async structure" required by this assignment was possible.
+The communication between this two nodes is implemented through a publish/subscribe structure using two different topics ```MY_topic_teleop```  & ```MY_topic_send_goal```: in this way I made a structure in which the input given by the user determines which callback is going to be called in the controller node, so that the "async structure" required by this assignment was possible.
+	
+	
+Regarding points 2) and 3) of the assignment I remapped an already existing topic (```teleop_twist_keyboard```) so that instead of publishing directly on ```cmd_vel" it publishes on my personal topic ```myRemapped_cmd_vel```: by doing this I manage to consider the velocities published by this topic only when required, that is when the user selected mode 2) or 3), furthermore it allowed me to add the collision avoidance functionality needed for the third part of the assignment.
  1. **/world** : 
  - which was already given and sets the simulation environment. As we can see from the image it publishes on the topic ```/base_scan``` with information regarding robot's lasers scan, and is subscribed to ```/cmd_vel``` topic so that it can receive msgs to set the robot' speed.
 2. **/controller_node**	:
