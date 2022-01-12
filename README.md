@@ -76,7 +76,7 @@ Rviz instead gives another point of view of the same environment, that is from r
 The project is based on the ROS scheme that is shown in the following graph:
 
 <p align="center">
-<img src="https://github.com/claudio-dg/final_assignment/blob/main/images/final_assign_rosgraph.png?raw=true" width="900" height="200" />
+<img src="https://github.com/claudio-dg/final_assignment/blob/main/images/final_assign_rosgraph.png?raw=true" width="900"  />
 <p>
  
 The ROS package of the project is called ```"final_assignment"```, it exploits two already given packages: ```slam_gmapping```, which opens the environment and allows the robot to create a map of what sorrounds him, and ```move_base```, which requires a goal to be sent to the topic ```move_base/goal``` in order to make the robot move towards it.
