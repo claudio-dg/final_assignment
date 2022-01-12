@@ -200,7 +200,7 @@ print controller console introduction
 		put goal coordinates in a global variable
 		if msg contains flag value for "goal canceled"
 			clear the terminal
-			print that goal has been canceled
+			print that goal has been canceled by user
 			set "canceled" global flag value to 1
 		else
 			reset global flags variables
