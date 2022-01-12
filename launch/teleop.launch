@@ -1,0 +1,9 @@
+<launch>
+  
+ 
+  <remap from="cmd_vel" to="myRemapped_cmd_vel"/>
+  <node name="teleop_twist_keyboard" pkg="teleop_twist_keyboard"
+    type="teleop_twist_keyboard.py" output="screen" launch-prefix="lxterminal -e"/>
+    
+
+</launch>

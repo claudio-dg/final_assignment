@@ -1,0 +1,9 @@
+<launch>
+    <include file="$(find final_assignment)/launch/simulation_gmapping.launch" />
+    <include file="$(find final_assignment)/launch/move_base.launch" />
+    <include file="$(find final_assignment)/launch/teleop.launch" />
+     
+    <include file="$(find final_assignment)/launch/my_scripts.launch" />
+
+	 
+</launch>

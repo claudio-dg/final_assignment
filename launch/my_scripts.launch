@@ -1,0 +1,7 @@
+<launch>
+
+<node name="my_controller_node" pkg="final_assignment" type="my_controller_node" launch-prefix="lxterminal -e"  output="screen"/>
+<node name="inputConsole_node" pkg="final_assignment" type="inputConsole_node" launch-prefix="lxterminal -e"  output="screen"/>
+
+
+</launch>
