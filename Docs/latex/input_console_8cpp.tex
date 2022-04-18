@@ -1,0 +1,121 @@
+\hypertarget{input_console_8cpp}{}\doxysection{src/input\+Console.cpp File Reference}
+\label{input_console_8cpp}\index{src/inputConsole.cpp@{src/inputConsole.cpp}}
+
+
+input Console to select the desired action of the robot  
+
+
+{\ttfamily \#include $<$ros/ros.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}string\char`\"{}}\newline
+{\ttfamily \#include $<$geometry\+\_\+msgs/\+Point.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}actionlib\+\_\+msgs/\+Goal\+I\+D.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$std\+\_\+msgs/\+Bool.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}rosgraph\+\_\+msgs/\+Clock.\+h\char`\"{}}\newline
+Include dependency graph for input\+Console.\+cpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{input_console_8cpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{input_console_8cpp_a7288e03aa16b057b40c231065a4a44d7}{Clock\+Callback}} (const rosgraph\+\_\+msgs\+::\+Clock\+::\+Const\+Ptr \&msg)
+\begin{DoxyCompactList}\small\item\em Callback for /clock topic for a continous and infinte internal loop. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{input_console_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}\label{input_console_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}} 
+int {\bfseries main} (int argc, char $\ast$$\ast$argv)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{input_console_8cpp_a4ba8c8aac6bc6b663b3f8e7f11dc04c0}\label{input_console_8cpp_a4ba8c8aac6bc6b663b3f8e7f11dc04c0}} 
+ros\+::\+Publisher \mbox{\hyperlink{input_console_8cpp_a4ba8c8aac6bc6b663b3f8e7f11dc04c0}{pub\+Goal\+Point}}
+\begin{DoxyCompactList}\small\item\em global publisher for M\+Y\+\_\+topic\+\_\+send\+\_\+goal \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{input_console_8cpp_a6a4ede0a30545fbce331b40ee516f705}\label{input_console_8cpp_a6a4ede0a30545fbce331b40ee516f705}} 
+geometry\+\_\+msgs\+::\+Point \mbox{\hyperlink{input_console_8cpp_a6a4ede0a30545fbce331b40ee516f705}{input\+Point}}
+\begin{DoxyCompactList}\small\item\em message containing goal\textquotesingle{}s coordinates (x,y) \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{input_console_8cpp_af16f3cb6a089096b01458711b8a6eebb}\label{input_console_8cpp_af16f3cb6a089096b01458711b8a6eebb}} 
+ros\+::\+Publisher \mbox{\hyperlink{input_console_8cpp_af16f3cb6a089096b01458711b8a6eebb}{pub\+Cancel}}
+\begin{DoxyCompactList}\small\item\em global publisher for move\+\_\+base/cancel \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{input_console_8cpp_a51b953fa15a259f7b0bc732f63b0ef8d}\label{input_console_8cpp_a51b953fa15a259f7b0bc732f63b0ef8d}} 
+actionlib\+\_\+msgs\+::\+Goal\+ID \mbox{\hyperlink{input_console_8cpp_a51b953fa15a259f7b0bc732f63b0ef8d}{my\+\_\+cancel}}
+\begin{DoxyCompactList}\small\item\em message for cancelling goal \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{input_console_8cpp_aa2c75d799e9fc2039c9885995fd2ea99}\label{input_console_8cpp_aa2c75d799e9fc2039c9885995fd2ea99}} 
+ros\+::\+Publisher \mbox{\hyperlink{input_console_8cpp_aa2c75d799e9fc2039c9885995fd2ea99}{pub\+Teleop}}
+\begin{DoxyCompactList}\small\item\em global publisher for M\+Y\+\_\+topic\+\_\+teleop \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{input_console_8cpp_ab30cd9f563e4001bd95ca803313e6c67}\label{input_console_8cpp_ab30cd9f563e4001bd95ca803313e6c67}} 
+std\+\_\+msgs\+::\+Bool \mbox{\hyperlink{input_console_8cpp_ab30cd9f563e4001bd95ca803313e6c67}{which\+Teleop}}
+\begin{DoxyCompactList}\small\item\em boolean message containing manual drive\textquotesingle{}s modality\+: 0 = Fully manual ; 1 = Assisted manual \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{input_console_8cpp_a829831b69f522e8f5ae5dcdc28158d3e}\label{input_console_8cpp_a829831b69f522e8f5ae5dcdc28158d3e}} 
+float \mbox{\hyperlink{input_console_8cpp_a829831b69f522e8f5ae5dcdc28158d3e}{x\+\_\+goal}}
+\begin{DoxyCompactList}\small\item\em global float variable for x coordinate of the goal \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{input_console_8cpp_a20e8d23393e688fc52779c872bdc1e45}\label{input_console_8cpp_a20e8d23393e688fc52779c872bdc1e45}} 
+float \mbox{\hyperlink{input_console_8cpp_a20e8d23393e688fc52779c872bdc1e45}{y\+\_\+goal}}
+\begin{DoxyCompactList}\small\item\em global float variable for y coordinate of the goal \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{input_console_8cpp_a16ef1666a56166b1ea4616fedf9df7bd}\label{input_console_8cpp_a16ef1666a56166b1ea4616fedf9df7bd}} 
+std\+::string \mbox{\hyperlink{input_console_8cpp_a16ef1666a56166b1ea4616fedf9df7bd}{goalX}}
+\begin{DoxyCompactList}\small\item\em global std\+::string variable for x coordinate of the goal \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{input_console_8cpp_adbd5eb55f7b370cd5779366ffc5a07c7}\label{input_console_8cpp_adbd5eb55f7b370cd5779366ffc5a07c7}} 
+std\+::string \mbox{\hyperlink{input_console_8cpp_adbd5eb55f7b370cd5779366ffc5a07c7}{goalY}}
+\begin{DoxyCompactList}\small\item\em global std\+::string variable for y coordinate of the goal \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{input_console_8cpp_a38deedb02dcebac366f97a0879b3be5b}\label{input_console_8cpp_a38deedb02dcebac366f97a0879b3be5b}} 
+char \mbox{\hyperlink{input_console_8cpp_a38deedb02dcebac366f97a0879b3be5b}{input}}
+\begin{DoxyCompactList}\small\item\em global char variable for user\textquotesingle{}s keyboard input \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+input Console to select the desired action of the robot 
+
+\begin{DoxyAuthor}{Author}
+Claudio Del Gaizo 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+12/01/2022
+\end{DoxyDate}
+Subscribes to\+: ~\newline
+ /clock \+: for a continuous callback
+
+Publishes to\+: ~\newline
+ /move\+\_\+base/cancel \+: to cancel current given goal
+
+/\+M\+Y\+\_\+topic\+\_\+send\+\_\+goal \+: to send a new position goal to the controller
+
+/\+M\+Y\+\_\+topic\+\_\+teleop \+: uses a boolean msg to specify to the controller which \char`\"{}manual drive mode\char`\"{} has been selected
+
+Description\+:
+
+This Console receives keyboard\textquotesingle{}s inputs from the user, allowing him to select the desired behaviour of the robot among the possible ones, shown from the console itself. 
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{input_console_8cpp_a7288e03aa16b057b40c231065a4a44d7}\label{input_console_8cpp_a7288e03aa16b057b40c231065a4a44d7}} 
+\index{inputConsole.cpp@{inputConsole.cpp}!ClockCallback@{ClockCallback}}
+\index{ClockCallback@{ClockCallback}!inputConsole.cpp@{inputConsole.cpp}}
+\doxysubsubsection{\texorpdfstring{ClockCallback()}{ClockCallback()}}
+{\footnotesize\ttfamily void Clock\+Callback (\begin{DoxyParamCaption}\item[{const rosgraph\+\_\+msgs\+::\+Clock\+::\+Const\+Ptr \&}]{msg }\end{DoxyParamCaption})}
+
+
+
+Callback for /clock topic for a continous and infinte internal loop. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em msg} & contains the clock\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void
+\end{DoxyReturn}
+This function shows an interface to the user asking for an input, based on which it can\+:
+
+° cancel a goal by publishing an actionlib\+\_\+msgs\+::\+Goal\+ID msg on move\+\_\+base/cancel topic
+
+° set a new goal by publishing a geometry\+\_\+msgs\+::\+Point msg on M\+Y\+\_\+topic\+\_\+send\+\_\+goal topic
+
+° set the chosen modality of manual drive by publishing a std\+\_\+msgs\+::\+Bool on M\+Y\+\_\+topic\+\_\+teleop topic
+
+° terminate the node 

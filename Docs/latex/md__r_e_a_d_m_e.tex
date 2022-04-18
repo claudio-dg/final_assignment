@@ -1,0 +1,225 @@
+This repository contains the result of my personal work for the final Assignment of the course.
+
+The goal of this assignment is to Develop a software architecture for the control of the robot in the environment. The software relies on the move\+\_\+base and gmapping packages for localizing the robot and plan the motion. The architecture should be able to get the user request, and let the robot execute one of the following behaviors (depending on the user’s input)\+:
+
+
+\begin{DoxyEnumerate}
+\item autonomously reach a x,y coordinate inserted by the user.
+\item let the user drive the robot with the keyboard
+\item let the user drive the robot assisting them to avoid collisions
+\item autonomously cancel a goal if it is not reachable using a timeout
+\item in addition we could add the functionality of manually canceling a given goal
+\end{DoxyEnumerate}
+
+To do this we had to use R\+OS for controlling the robot and Gazebo and R\+Viz environments. I decided to use C++ as programming language.\hypertarget{md__r_e_a_d_m_e_autotoc_md0}{}\doxysection{Table of contents}\label{md__r_e_a_d_m_e_autotoc_md0}
+
+\begin{DoxyItemize}
+\item \href{\#setup}{\texttt{ Setup}}
+\item \href{\#gazebo-and-rviz-maps}{\texttt{ Gazebo and Rviz Maps}}
+\item \href{\#project-structure-and-behaviour-description}{\texttt{ Project structure and behaviour description}}
+\item \href{\#pseudocode}{\texttt{ Pseudo\+Code}}
+\end{DoxyItemize}\hypertarget{md__r_e_a_d_m_e_autotoc_md1}{}\doxysection{Setup}\label{md__r_e_a_d_m_e_autotoc_md1}
+This repository Contains all the useful files to run the scripts that i produced for this assignment. To try it, it is sufficient to clone this repository in your R\+OS workspace\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\$ git clone https://github.com/claudio-\/dg/final\_assignment.git}
+\end{DoxyCode}
+
+
+and then type the following command in the terminal to simultaneously launch all the necessary nodes through the $\ast$$\ast$\char`\"{}launch\+File\char`\"{}$\ast$$\ast$\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\$ roslaunch final\_assignment final.launch}
+\end{DoxyCode}
+
+
+This Launch File has been made to make it easier to run the project , but if you like you can manually run every part of the project by launching the following launch files\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\$ roslaunch final\_assignment move\_base.launch}
+\DoxyCodeLine{\$ roslaunch final\_assignment simulation\_gmapping.launch}
+\end{DoxyCode}
+
+
+To run the simulation environment and the move\+\_\+base functions.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\$ roslaunch final\_assignment teleop.launch}
+\DoxyCodeLine{\$ roslaunch final\_assignment my\_scripts.launch}
+\end{DoxyCode}
+
+
+To run the teleop\+\_\+\+Twist\+\_\+keyboard node and my scripts produced for this assignment.\hypertarget{md__r_e_a_d_m_e_autotoc_md2}{}\doxysection{Gazebo and Rviz Maps}\label{md__r_e_a_d_m_e_autotoc_md2}
+The environment used for this assignment consists in the map illustrated (froma Gazebo view) in the following image\+:
+
+ 
+
+Rviz instead gives another point of view of the same environment, that is from robot sensors\textquotesingle{} point of view\+: the robot, in fact, does not know from the beginning the full map he\textquotesingle{}s in, but thanks to the laser sensors and the {\ttfamily gmapping} package he is capable of creating it.
+
+ \hypertarget{md__r_e_a_d_m_e_autotoc_md3}{}\doxysection{Project structure and behaviour description}\label{md__r_e_a_d_m_e_autotoc_md3}
+The project is based on the R\+OS scheme that is shown in the following graph\+:
+
+ 
+
+The R\+OS package of the project is called {\ttfamily \char`\"{}final\+\_\+assignment\char`\"{}}, it exploits two already given packages\+: {\ttfamily slam\+\_\+gmapping}, which opens the environment and allows the robot to create a map of what sorrounds him, and {\ttfamily move\+\_\+base}, which requires a goal to be sent to the topic {\ttfamily move\+\_\+base/goal} in order to make the robot move towards it.
+
+In addition to these i created two nodes contained in {\ttfamily src} folder named {\ttfamily Input\+Console} and {\ttfamily controller}; as the name suggests the first one is encharged of taking user\textquotesingle{}s inputs to select the desired behaviour of the robot, while the second one manages the consequences of user\textquotesingle{}s request by communicating with other nodes, for instance by sending the goal\textquotesingle{}s coordinates to {\ttfamily move\+\_\+base/goal} with a msg of type \+:{\ttfamily move\+\_\+base\+\_\+msgs/\+Move\+Base\+Action\+Goal}. The communication between my two nodes is implemented through a {\ttfamily Publish/\+Subscribe} architecture using two different topics {\ttfamily M\+Y\+\_\+topic\+\_\+teleop} \& {\ttfamily M\+Y\+\_\+topic\+\_\+send\+\_\+goal}\+: in this way I made a structure in which the input given by the user determines which callback is going to be called in the controller node, so that the \char`\"{}async structure\char`\"{} required by this assignment was possible.
+
+
+\begin{DoxyItemize}
+\item Regarding point 1) I used the {\ttfamily \textbackslash{}move\+\_\+base\textbackslash{}feedback} topic to retreive information about robot\textquotesingle{}s status such as the current position or the time counter\+: thanks to these two pieces of information I implemented an algorithm to state whether the goal was reached or not (considering an approximation error due to the fact that the robot seemed to get really close to the goal but never reaching its exact coordinates), and a T\+I\+M\+E\+O\+UT, so that if the robot doesen\textquotesingle{}t reach the goal in Time it is considered unreachable and will be canceled by sending a msg to {\ttfamily \textbackslash{}move\+\_\+base\textbackslash{}cancel} topic
+\item Regarding points 2) and 3) of the assignment I remapped an already existing topic ({\ttfamily teleop\+\_\+twist\+\_\+keyboard}) so that instead of publishing directly on {\ttfamily cmd\+\_\+vel} it publishes on my personal topic {\ttfamily my\+Remapped\+\_\+cmd\+\_\+vel}\+: by doing this I manage to consider the velocities published by this topic only when required, that is when the user selected mode 2) or 3), furthermore it allowed me to add the collision avoidance functionality needed for the third part of the assignment.
+\end{DoxyItemize}\hypertarget{md__r_e_a_d_m_e_autotoc_md4}{}\doxysubsection{Behaviour description  \+:}\label{md__r_e_a_d_m_e_autotoc_md4}
+After having launched all the required launch files Gazebo and Rviz environments will open, along with 3 different terminals\+:
+\begin{DoxyItemize}
+\item {\ttfamily Input Console} \+: in which you can select what to do and that will show the following user interface\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{***********THIS IS THE INPUT CONSOLE***********}
+\DoxyCodeLine{}
+\DoxyCodeLine{Which Action do you want to use to move the robot?}
+\DoxyCodeLine{ENTER 'c' to cancel last given goal}
+\DoxyCodeLine{ENTER '1' to send a new goal to the robot}
+\DoxyCodeLine{ENTER '2  to manually drive the robot}
+\DoxyCodeLine{ENTER '3' to manually drive the robot WITH assisted collision avoidance}
+\DoxyCodeLine{ENTER 'q' to terminate this node}
+\end{DoxyCode}
+
+\item {\ttfamily Controller Console} \+: that will show some useful real-\/time info depending on the modality selected in the input console, such as the elapsed time since the goal was given or some notifications to inform the user tha a certain direction will probably cause a collision.
+\item {\ttfamily Teleop\+Twist Keyboard Console} \+: in which the user can insert commands to manually drive the robot that will only be read if modality 2) or 3) were previously selected through the input console.
+\end{DoxyItemize}\hypertarget{md__r_e_a_d_m_e_autotoc_md5}{}\doxysection{Pseudocode}\label{md__r_e_a_d_m_e_autotoc_md5}
+To reproduce the behaviour previously described i wrote 2 C++ programms contained in the {\ttfamily src} folder\+:
+\begin{DoxyItemize}
+\item input\+\_\+console.\+cpp
+\item \mbox{\hyperlink{controller_8cpp}{controller.\+cpp}}
+\end{DoxyItemize}\hypertarget{md__r_e_a_d_m_e_autotoc_md6}{}\doxysubsection{Input\+\_\+console.\+cpp  \+:}\label{md__r_e_a_d_m_e_autotoc_md6}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{initialize node}
+\DoxyCodeLine{initialize necessary publishers and subscribers}
+\DoxyCodeLine{Use continuous callback from clock topic}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    print User Interface menu}
+\DoxyCodeLine{    wait for a keyboard input and put it into a variable "input"}
+\DoxyCodeLine{    switch(input)}
+\DoxyCodeLine{        case 'c':}
+\DoxyCodeLine{            publish on move\_base/cancel topic to cancel last given goal}
+\DoxyCodeLine{        publish a flag msg on MY\_topic\_send\_goal to reset variables in controller}
+\DoxyCodeLine{        print that goal has been canceled}
+\DoxyCodeLine{        break;}
+\DoxyCodeLine{        case '1':}
+\DoxyCodeLine{        print autonomous driving introduction}
+\DoxyCodeLine{                ask for goal coordinates}
+\DoxyCodeLine{            read goal coordinates from the user}
+\DoxyCodeLine{                publish them on MY\_topic\_send\_goal topic to notify the controller}
+\DoxyCodeLine{        print sent coordinates}
+\DoxyCodeLine{            break;}
+\DoxyCodeLine{        case '2':}
+\DoxyCodeLine{            print manual driving introduction}
+\DoxyCodeLine{        print a message to tell the user to look at teleopkeyboard console}
+\DoxyCodeLine{        publish a boolean msg equal to 0 on MY\_topic\_teleop to inform the controller that manual driving was selected}
+\DoxyCodeLine{        break;           }
+\DoxyCodeLine{        case '3':}
+\DoxyCodeLine{            print ASSISTED manual driving introduction}
+\DoxyCodeLine{        print a message to tell the user to look at teleopkeyboard console}
+\DoxyCodeLine{        publish a boolean msg equal to 1 on MY\_topic\_teleop to inform the controller that ASSISTED manual driving was selected}
+\DoxyCodeLine{        break;}
+\DoxyCodeLine{        case 'q':}
+\DoxyCodeLine{        print an exiting message}
+\DoxyCodeLine{        exit the program}
+\DoxyCodeLine{        default:}
+\DoxyCodeLine{            print an error for a wrong command inserted}
+\DoxyCodeLine{            break;}
+\end{DoxyCode}
+\hypertarget{md__r_e_a_d_m_e_autotoc_md7}{}\doxysubsection{Controller.\+cpp  \+:}\label{md__r_e_a_d_m_e_autotoc_md7}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{initialize node}
+\DoxyCodeLine{initialize necessary publishers and subscribers}
+\DoxyCodeLine{print controller console introduction   }
+\DoxyCodeLine{    //the MAIN loops with ros::SpinOnce whilethe program isn't killed}
+\DoxyCodeLine{    //check for global flag values}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    if user asked for manual drive}
+\DoxyCodeLine{        take velocity from teleopKeyboard contained into myRemapped\_cmd\_vel topic}
+\DoxyCodeLine{        publish it on cmd\_vel topic to make the robot move}
+\DoxyCodeLine{    if user asked for ASSISTED manual drive}
+\DoxyCodeLine{        call assistedMovement function**}
+\DoxyCodeLine{    if user didn't ask for these 2 modalities, wait for other callbacks to be called}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    //**assitedMovement function:}
+\DoxyCodeLine{        check distances received from laser sensors}
+\DoxyCodeLine{        if there is an obstacle in front of the robot}
+\DoxyCodeLine{            check for nearest obstacles at his sides}
+\DoxyCodeLine{            if nearest obstacle is at his right}
+\DoxyCodeLine{                turn left a bit}
+\DoxyCodeLine{                print feedback to the user}
+\DoxyCodeLine{            if nearest obstacle is at his left}
+\DoxyCodeLine{                turn right a bit}
+\DoxyCodeLine{                print feedback to the user}
+\DoxyCodeLine{            set flag changedVel to 1 to state that the direction has been modified}
+\DoxyCodeLine{            sleep 0.3 seconds}
+\DoxyCodeLine{        if the direction has been modified}
+\DoxyCodeLine{            stop the robot}
+\DoxyCodeLine{        else}
+\DoxyCodeLine{            clear the console}
+\DoxyCodeLine{            take velocity from teleopKeyboard contained into myRemapped\_cmd\_vel topic}
+\DoxyCodeLine{            publish it on cmd\_vel topic to make the robot move}
+\DoxyCodeLine{    }
+\DoxyCodeLine{//basing on which msg is received from input cosole, different callbacks are executed}
+\DoxyCodeLine{    if 'c' or '1' were inserted in input cosole  "myCallback" is executed}
+\DoxyCodeLine{        }
+\DoxyCodeLine{        reset manual drive global flag value}
+\DoxyCodeLine{        put goal coordinates in a global variable}
+\DoxyCodeLine{        if msg contains flag value for "goal canceled"}
+\DoxyCodeLine{            clear the terminal}
+\DoxyCodeLine{            print that goal has been canceled by user}
+\DoxyCodeLine{            set "canceled" global flag value to 1}
+\DoxyCodeLine{        else}
+\DoxyCodeLine{            reset global flags variables}
+\DoxyCodeLine{            publish goal on  move\_base/goal topic}
+\DoxyCodeLine{            print that goal has been published}
+\DoxyCodeLine{    return}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    if '2' or '3' were inserted in input cosole "TeleopCallback" is executed}
+\DoxyCodeLine{        }
+\DoxyCodeLine{        put msg's boolean value in the global flag variable "manualdrive"}
+\DoxyCodeLine{        cancel possibly existing goals}
+\DoxyCodeLine{        reset velocities to 0}
+\DoxyCodeLine{        if msg asked for manual drive}
+\DoxyCodeLine{            print manual driving introduction}
+\DoxyCodeLine{            print a message to tell the user to look at teleopkeyboard console}
+\DoxyCodeLine{        else if msg asked for ASSISTED manual drive}
+\DoxyCodeLine{            print ASSISTED manual driving introduction}
+\DoxyCodeLine{            print a message to tell the user to look at teleopkeyboard console}
+\DoxyCodeLine{    }
+\DoxyCodeLine{//last 2 callbacks (myCmdCallback \& CurrentPositionCallback) are called respectively when user inserts command on teleopKeyboard console and when the robot status changes}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    //myCmdCallback}
+\DoxyCodeLine{    put the received vel in a global variable}
+\DoxyCodeLine{    reset changedVel flag each time a new command is inserted}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    }
+\DoxyCodeLine{    //CurrentPositionCallback}
+\DoxyCodeLine{    execute the callback only if goal wasn't reached yet (goal\_reached==0)}
+\DoxyCodeLine{    take current position coordinates from /move\_base/feedback topic}
+\DoxyCodeLine{    if the status has changed just now (firstTime==1)}
+\DoxyCodeLine{        take current time as Starting time}
+\DoxyCodeLine{        reset firstTime flag value}
+\DoxyCodeLine{    keep updating current time}
+\DoxyCodeLine{    compute elapsed time since the goal was given}
+\DoxyCodeLine{    print info about goal coordinates and time elapsed}
+\DoxyCodeLine{    compute Error between current position and Goal position}
+\DoxyCodeLine{    if error is small enough}
+\DoxyCodeLine{        set goal\_reached flag to TRUE}
+\DoxyCodeLine{    if the timeout is over and the goal hasn't been reached}
+\DoxyCodeLine{        cancel the goal }
+\DoxyCodeLine{        print that goal has been canceled}
+\DoxyCodeLine{    else if  goal has been reached before timeout was over}
+\DoxyCodeLine{        clear console}
+\DoxyCodeLine{        print that goal was reached}
+\end{DoxyCode}
+ 

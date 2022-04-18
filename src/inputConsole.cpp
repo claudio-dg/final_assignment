@@ -1,3 +1,31 @@
+/**
+* \file inputConsole.cpp
+* \brief input Console to select the desired action of the robot
+* \author Claudio Del Gaizo
+* \version 0.1
+* \date 12/01/2022
+*
+*
+* \details
+*
+* Subscribes to: <BR>
+* /clock : for a continuous callback
+*
+* Publishes to: <BR>
+* /move_base/cancel : to cancel current given goal
+*
+* /MY_topic_send_goal : to send a new position goal to the controller
+*
+* /MY_topic_teleop : uses a boolean msg to specify to the controller which "manual drive mode" has been selected 
+*
+* Description:
+*
+* This Console receives keyboard's inputs from the user, allowing him to select the desired behaviour of the robot among the possible ones, shown from the console itself.
+**/
+
+
+
+
 #include <ros/ros.h> 
 
 //for cin >> 
@@ -15,30 +43,47 @@
 //for clock topic
 #include  "rosgraph_msgs/Clock.h"
 
-ros::Publisher pubGoalPoint;
-geometry_msgs::Point inputPoint;
+ros::Publisher pubGoalPoint; ///< global publisher for MY_topic_send_goal
+geometry_msgs::Point inputPoint;///< message containing goal's coordinates (x,y)
 
-ros::Publisher pubCancel;
-actionlib_msgs::GoalID my_cancel;
+ros::Publisher pubCancel; ///< global publisher for move_base/cancel
+actionlib_msgs::GoalID my_cancel; ///< message for cancelling goal
 
-ros::Publisher pubTeleop;
-std_msgs::Bool whichTeleop;
-
-
-float x_goal ;
-float y_goal ;
+ros::Publisher pubTeleop; ///< global publisher for MY_topic_teleop
+std_msgs::Bool whichTeleop; ///< boolean message containing manual drive's modality: 0 = Fully manual ; 1 = Assisted manual
 
 
-std::string goalX;
-std::string goalY;
-char input;
+float x_goal ; ///< global float variable for x coordinate of the goal
+float y_goal ; ///< global float variable for y coordinate of the goal
 
+
+std::string goalX;  ///< global std::string variable for x coordinate of the goal
+std::string goalY; ///< global std::string variable for y coordinate of the goal
+char input; ///< global char variable for user's keyboard input
+
+
+/**
+* \brief Callback for /clock topic for a continous and infinte internal loop
+* \param msg contains the clock
+*
+* \return void
+*
+* This function shows an interface to the user asking for an input, based on which it can:
+*
+* ° cancel a goal by publishing an actionlib_msgs::GoalID msg on move_base/cancel topic
+*
+* ° set a new goal by publishing a geometry_msgs::Point msg on MY_topic_send_goal topic
+*
+* ° set the chosen modality of manual drive by publishing a std_msgs::Bool on MY_topic_teleop topic
+*
+* ° terminate the node
+**/
 void ClockCallback(const rosgraph_msgs::Clock::ConstPtr& msg)
 {
 
 printf("\n\n***********THIS IS THE INPUT CONSOLE***********\n");
 
-printf("\nWhich Action do you want to use to move the robot?"); //scriverer meglio
+printf("\nWhich Action do you want to use to move the robot?"); 
 printf("\nENTER 'c' to cancel last given goal");
 printf("\nENTER '1' to send a new goal to the robot");
 printf("\nENTER '2  to manually drive the robot");

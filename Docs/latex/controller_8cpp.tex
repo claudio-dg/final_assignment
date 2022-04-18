@@ -1,0 +1,290 @@
+\hypertarget{controller_8cpp}{}\doxysection{src/controller.cpp File Reference}
+\label{controller_8cpp}\index{src/controller.cpp@{src/controller.cpp}}
+
+
+Controller for the turtlesim.  
+
+
+{\ttfamily \#include $<$ros/ros.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}chrono\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}string\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}geometry\+\_\+msgs/\+Twist.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}move\+\_\+base\+\_\+msgs/\+Move\+Base\+Action\+Goal.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}actionlib\+\_\+msgs/\+Goal\+Status\+Array.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}actionlib\+\_\+msgs/\+Goal\+I\+D.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}move\+\_\+base\+\_\+msgs/\+Move\+Base\+Action\+Feedback.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$geometry\+\_\+msgs/\+Point.\+h$>$}\newline
+{\ttfamily \#include $<$std\+\_\+msgs/\+Bool.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}sensor\+\_\+msgs/\+Laser\+Scan.\+h\char`\"{}}\newline
+Include dependency graph for controller.\+cpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{controller_8cpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{controller_8cpp_a45ba202b05caf39795aeca91b0ae547e}\label{controller_8cpp_a45ba202b05caf39795aeca91b0ae547e}} 
+\#define \mbox{\hyperlink{controller_8cpp_a45ba202b05caf39795aeca91b0ae547e}{T\+I\+M\+E\+O\+UT}}~45
+\begin{DoxyCompactList}\small\item\em threshold for reaching a goal before considering it unreachable \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{controller_8cpp_a8fe83ac76edc595f6b98cd4a4127aed5}\label{controller_8cpp_a8fe83ac76edc595f6b98cd4a4127aed5}} 
+\#define \mbox{\hyperlink{controller_8cpp_a8fe83ac76edc595f6b98cd4a4127aed5}{E\+R\+R\+OR}}~0.\+3
+\begin{DoxyCompactList}\small\item\em error to estimate the reaching of the goal\textquotesingle{}s position \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{controller_8cpp_afa69d5212c8cbbfd449fa9041d6bbf9b}\label{controller_8cpp_afa69d5212c8cbbfd449fa9041d6bbf9b}} 
+\#define \mbox{\hyperlink{controller_8cpp_afa69d5212c8cbbfd449fa9041d6bbf9b}{M\+I\+N\+D\+I\+S\+T\+A\+N\+CE}}~1
+\begin{DoxyCompactList}\small\item\em threshold of minimum distance for avoiding obstacle \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{controller_8cpp_a5fdca525d81c3047ccd115083b0de9bb}{my\+Cmd\+Callback}} (const geometry\+\_\+msgs\+::\+Twist\+::\+Const\+Ptr \&msg)
+\begin{DoxyCompactList}\small\item\em Callback for for the my\+Remapped\+\_\+cmd\+\_\+vel topic. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{controller_8cpp_a6fbe13525984f767a8db111b88f17fce}{Get\+Min\+Distance}} (int min\+\_\+index, int max\+\_\+index, float \mbox{\hyperlink{controller_8cpp_a33aaa729cbb740e24838ae2966459627}{ranges\+\_\+array}}\mbox{[}$\,$\mbox{]})
+\begin{DoxyCompactList}\small\item\em Function for detecting nearest wall in a certain direction. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{controller_8cpp_af7bed2b9bb79602672e6efa25d3979a2}{Lasers\+Callback}} (const sensor\+\_\+msgs\+::\+Laser\+Scan\+::\+Const\+Ptr \&msg)
+\begin{DoxyCompactList}\small\item\em Callback for for the for the /\+\_\+scan Topic. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{controller_8cpp_a8412a9d0bb93ba362addf6c492b6574c}{Teleop\+Callback}} (const std\+\_\+msgs\+::\+Bool\+::\+Const\+Ptr \&msg)
+\begin{DoxyCompactList}\small\item\em Callback for for the for the M\+Y\+\_\+topic\+\_\+teleop Topic. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{controller_8cpp_ad0a2fff6b0038e8d398822342e829d9c}{assisted\+Movement}} ()
+\begin{DoxyCompactList}\small\item\em Function for assisting manual drive. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{controller_8cpp_af8dd52fcd76f91189b3acc75a222c9d6}{my\+Callback}} (const geometry\+\_\+msgs\+::\+Point\+::\+Const\+Ptr \&msg)
+\begin{DoxyCompactList}\small\item\em Callback for for the for the M\+Y\+\_\+topic\+\_\+send\+\_\+goal topic. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{controller_8cpp_a50035d218c499c753f22bb3cba6df6d1}{Current\+Position\+Callback}} (const move\+\_\+base\+\_\+msgs\+::\+Move\+Base\+Action\+Feedback\+::\+Const\+Ptr \&msg)
+\begin{DoxyCompactList}\small\item\em Callback for for the for the /move\+\_\+base/feedback topic. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{controller_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}\label{controller_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}} 
+int {\bfseries main} (int argc, char $\ast$$\ast$argv)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{controller_8cpp_ade99baad604daed9de810ac3cf5da418}\label{controller_8cpp_ade99baad604daed9de810ac3cf5da418}} 
+ros\+::\+Publisher \mbox{\hyperlink{controller_8cpp_ade99baad604daed9de810ac3cf5da418}{pub1}}
+\begin{DoxyCompactList}\small\item\em global publisher for move\+\_\+base/goal \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{controller_8cpp_a5ab5ff5f019122139fa4b7508b3c947e}\label{controller_8cpp_a5ab5ff5f019122139fa4b7508b3c947e}} 
+move\+\_\+base\+\_\+msgs\+::\+Move\+Base\+Action\+Goal \mbox{\hyperlink{controller_8cpp_a5ab5ff5f019122139fa4b7508b3c947e}{my\+\_\+pos}}
+\begin{DoxyCompactList}\small\item\em message containing goal\textquotesingle{}s coordinates (x,y) \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{controller_8cpp_af16f3cb6a089096b01458711b8a6eebb}\label{controller_8cpp_af16f3cb6a089096b01458711b8a6eebb}} 
+ros\+::\+Publisher \mbox{\hyperlink{controller_8cpp_af16f3cb6a089096b01458711b8a6eebb}{pub\+Cancel}}
+\begin{DoxyCompactList}\small\item\em global publisher for move\+\_\+base/cancel \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{controller_8cpp_a51b953fa15a259f7b0bc732f63b0ef8d}\label{controller_8cpp_a51b953fa15a259f7b0bc732f63b0ef8d}} 
+actionlib\+\_\+msgs\+::\+Goal\+ID \mbox{\hyperlink{controller_8cpp_a51b953fa15a259f7b0bc732f63b0ef8d}{my\+\_\+cancel}}
+\begin{DoxyCompactList}\small\item\em message for cancelling goal \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{controller_8cpp_a22197de54c026ef97f0f99929418bb19}\label{controller_8cpp_a22197de54c026ef97f0f99929418bb19}} 
+ros\+::\+Publisher \mbox{\hyperlink{controller_8cpp_a22197de54c026ef97f0f99929418bb19}{pub\+Vel}}
+\begin{DoxyCompactList}\small\item\em global publisher for cmd\+\_\+vel \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{controller_8cpp_af77fec157775b93190291d4e941e3cdc}\label{controller_8cpp_af77fec157775b93190291d4e941e3cdc}} 
+geometry\+\_\+msgs\+::\+Twist \mbox{\hyperlink{controller_8cpp_af77fec157775b93190291d4e941e3cdc}{desired\+Vel}}
+\begin{DoxyCompactList}\small\item\em message containing desired velocity values (linear(x,y) -\/ angular(z) ) \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{controller_8cpp_ae81a3ec839e173c8759f69fa3e8b5835}\label{controller_8cpp_ae81a3ec839e173c8759f69fa3e8b5835}} 
+bool \mbox{\hyperlink{controller_8cpp_ae81a3ec839e173c8759f69fa3e8b5835}{goal\+\_\+reached}} = 0
+\begin{DoxyCompactList}\small\item\em global boolean variable to state if goal is reached or not ( 0=no 1=yes) \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{controller_8cpp_a85bd82bc96cafa71fd32b7a4f00e1231}\label{controller_8cpp_a85bd82bc96cafa71fd32b7a4f00e1231}} 
+bool \mbox{\hyperlink{controller_8cpp_a85bd82bc96cafa71fd32b7a4f00e1231}{canceled\+\_\+by\+\_\+user}} = 0
+\begin{DoxyCompactList}\small\item\em global boolean variable to state if goal is canceled by user (0=no 1=yes) \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{controller_8cpp_aab321c7149645cc92235ad45b0b7bee4}\label{controller_8cpp_aab321c7149645cc92235ad45b0b7bee4}} 
+bool \mbox{\hyperlink{controller_8cpp_aab321c7149645cc92235ad45b0b7bee4}{first\+Time}} = 0
+\begin{DoxyCompactList}\small\item\em global boolean variable to state if a loop is at its first iteration (0=no 1=yes) \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{controller_8cpp_ad7172b7247d0c126e0cf756de453f5a9}\label{controller_8cpp_ad7172b7247d0c126e0cf756de453f5a9}} 
+int \mbox{\hyperlink{controller_8cpp_ad7172b7247d0c126e0cf756de453f5a9}{manual\+Drive}} = 100
+\begin{DoxyCompactList}\small\item\em global integer flag to state if manual drive is chosen (0=fully manual 1=assisted manual others=manual not chosen) \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{controller_8cpp_a70ba37498c17e5581fe218d4174c6aa4}\label{controller_8cpp_a70ba37498c17e5581fe218d4174c6aa4}} 
+int \mbox{\hyperlink{controller_8cpp_a70ba37498c17e5581fe218d4174c6aa4}{changed\+Vel}} = 0
+\begin{DoxyCompactList}\small\item\em global integer variable to state if the velocity has been modified by \char`\"{}assisted driving\char`\"{} (0=no 1=yes) \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{controller_8cpp_a829831b69f522e8f5ae5dcdc28158d3e}\label{controller_8cpp_a829831b69f522e8f5ae5dcdc28158d3e}} 
+float \mbox{\hyperlink{controller_8cpp_a829831b69f522e8f5ae5dcdc28158d3e}{x\+\_\+goal}}
+\begin{DoxyCompactList}\small\item\em global float variable for x coordinate of the goal \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{controller_8cpp_a20e8d23393e688fc52779c872bdc1e45}\label{controller_8cpp_a20e8d23393e688fc52779c872bdc1e45}} 
+float \mbox{\hyperlink{controller_8cpp_a20e8d23393e688fc52779c872bdc1e45}{y\+\_\+goal}}
+\begin{DoxyCompactList}\small\item\em global float variable for y coordinate of the goal \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{controller_8cpp_ae96b308abea2d92d6f9207942f541960}\label{controller_8cpp_ae96b308abea2d92d6f9207942f541960}} 
+ros\+::\+Time \mbox{\hyperlink{controller_8cpp_ae96b308abea2d92d6f9207942f541960}{current\+Time}}
+\begin{DoxyCompactList}\small\item\em global ros\+::\+Time variable for counting time elapsed \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{controller_8cpp_a459c2b00dd137bf7e9c9fa6452089e27}\label{controller_8cpp_a459c2b00dd137bf7e9c9fa6452089e27}} 
+ros\+::\+Time \mbox{\hyperlink{controller_8cpp_a459c2b00dd137bf7e9c9fa6452089e27}{Start\+Time}}
+\begin{DoxyCompactList}\small\item\em global ros\+::\+Time variable for counting starting time \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{controller_8cpp_aa795cbf13b4e73a22735baf9340d8989}\label{controller_8cpp_aa795cbf13b4e73a22735baf9340d8989}} 
+float \mbox{\hyperlink{controller_8cpp_aa795cbf13b4e73a22735baf9340d8989}{errorX}}
+\begin{DoxyCompactList}\small\item\em global float variable for x error of the position \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{controller_8cpp_a5d09e3761b0b151cd8dbc6a3653c2560}\label{controller_8cpp_a5d09e3761b0b151cd8dbc6a3653c2560}} 
+float \mbox{\hyperlink{controller_8cpp_a5d09e3761b0b151cd8dbc6a3653c2560}{errorY}}
+\begin{DoxyCompactList}\small\item\em global float variable for y error of the position \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{controller_8cpp_a33aaa729cbb740e24838ae2966459627}\label{controller_8cpp_a33aaa729cbb740e24838ae2966459627}} 
+float \mbox{\hyperlink{controller_8cpp_a33aaa729cbb740e24838ae2966459627}{ranges\+\_\+array}} \mbox{[}721\mbox{]}
+\begin{DoxyCompactList}\small\item\em global float array containing laser\textquotesingle{} scan results \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{controller_8cpp_acd2fef7bf7f6c67aa51c5fbb22cc853d}\label{controller_8cpp_acd2fef7bf7f6c67aa51c5fbb22cc853d}} 
+float \mbox{\hyperlink{controller_8cpp_acd2fef7bf7f6c67aa51c5fbb22cc853d}{right\+\_\+dist}} =200
+\begin{DoxyCompactList}\small\item\em global float variable containing min distance from an obstacle at the right of the robot \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{controller_8cpp_a4d12961bfd02364866f34b13f997df9d}\label{controller_8cpp_a4d12961bfd02364866f34b13f997df9d}} 
+float \mbox{\hyperlink{controller_8cpp_a4d12961bfd02364866f34b13f997df9d}{left\+\_\+dist}} = 200
+\begin{DoxyCompactList}\small\item\em global float variable containing min distance from an obstacle at the left of the robot \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{controller_8cpp_ae4e9ffb145fbda076a76dd0c4241c087}\label{controller_8cpp_ae4e9ffb145fbda076a76dd0c4241c087}} 
+float \mbox{\hyperlink{controller_8cpp_ae4e9ffb145fbda076a76dd0c4241c087}{frontal\+\_\+dist}} = 200
+\begin{DoxyCompactList}\small\item\em global float variable containing min distance from an obstacle in front of the robot \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{controller_8cpp_a70cda465cdbca4003b41330d706e8fa9}\label{controller_8cpp_a70cda465cdbca4003b41330d706e8fa9}} 
+geometry\+\_\+msgs\+::\+Twist \mbox{\hyperlink{controller_8cpp_a70cda465cdbca4003b41330d706e8fa9}{vel\+From\+Teleop}}
+\begin{DoxyCompactList}\small\item\em global variable for saving teleop input received \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Controller for the turtlesim. 
+
+\begin{DoxyAuthor}{Author}
+Claudio Del Gaizo 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+12/01/2022
+\end{DoxyDate}
+Subscribes to\+: ~\newline
+ /move\+\_\+base/feedback \+: to have info about robot status
+
+/\+M\+Y\+\_\+topic\+\_\+send\+\_\+goal \+: to receive a new position goal from the Input Console
+
+/\+M\+Y\+\_\+topic\+\_\+teleop \+: to receive from the Input Console which \char`\"{}manual drive mode\char`\"{} has been selected
+
+/my\+Remapped\+\_\+cmd\+\_\+vel \+: to receive velocity requested by user via keyboard from the remapped cmd\+\_\+vel topic
+
+/scan \+: to receive info from robot\textquotesingle{}s lasers
+
+Publishes to\+: ~\newline
+ /move\+\_\+base/goal \+: to make the robot move towards the Goal position
+
+move\+\_\+base/cancel \+: to cancel current given goal
+
+cmd\+\_\+vel \+: to move the robot by keys
+
+Description\+:
+
+This node manages the overall behaviour of the robot\+: it communicates with the input Console through a publish/subscribe algorithm, so that it can \textquotesingle{}translate\textquotesingle{} the user input into the desired motion of the robot. According to which message is published from the input console, a different callback comes into action in this node. 
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{controller_8cpp_ad0a2fff6b0038e8d398822342e829d9c}\label{controller_8cpp_ad0a2fff6b0038e8d398822342e829d9c}} 
+\index{controller.cpp@{controller.cpp}!assistedMovement@{assistedMovement}}
+\index{assistedMovement@{assistedMovement}!controller.cpp@{controller.cpp}}
+\doxysubsubsection{\texorpdfstring{assistedMovement()}{assistedMovement()}}
+{\footnotesize\ttfamily void assisted\+Movement (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Function for assisting manual drive. 
+
+\begin{DoxyReturn}{Returns}
+void
+\end{DoxyReturn}
+in case it detects a possible collision it will notify the user and deny the movement, it will repositon the robot in a safier direction and then stop it, waiting for another input of the user. Otherwise it will simply move the robot as the user asked ny publishing on cmd\+\_\+vel topic. \mbox{\Hypertarget{controller_8cpp_a50035d218c499c753f22bb3cba6df6d1}\label{controller_8cpp_a50035d218c499c753f22bb3cba6df6d1}} 
+\index{controller.cpp@{controller.cpp}!CurrentPositionCallback@{CurrentPositionCallback}}
+\index{CurrentPositionCallback@{CurrentPositionCallback}!controller.cpp@{controller.cpp}}
+\doxysubsubsection{\texorpdfstring{CurrentPositionCallback()}{CurrentPositionCallback()}}
+{\footnotesize\ttfamily void Current\+Position\+Callback (\begin{DoxyParamCaption}\item[{const move\+\_\+base\+\_\+msgs\+::\+Move\+Base\+Action\+Feedback\+::\+Const\+Ptr \&}]{msg }\end{DoxyParamCaption})}
+
+
+
+Callback for for the for the /move\+\_\+base/feedback topic. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em msg} & contains info about the robot\textquotesingle{}s current status \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void
+\end{DoxyReturn}
+This function is called each time the robot\textquotesingle{} status changes. It starts a timer and keeps verifying if the given goal is reached or not\+: if the timer overcomes a timeout threshold before the robot can reach the goal, the goal is canceled, otherwise it notifies the user of having achieved the desired position. \mbox{\Hypertarget{controller_8cpp_a6fbe13525984f767a8db111b88f17fce}\label{controller_8cpp_a6fbe13525984f767a8db111b88f17fce}} 
+\index{controller.cpp@{controller.cpp}!GetMinDistance@{GetMinDistance}}
+\index{GetMinDistance@{GetMinDistance}!controller.cpp@{controller.cpp}}
+\doxysubsubsection{\texorpdfstring{GetMinDistance()}{GetMinDistance()}}
+{\footnotesize\ttfamily float Get\+Min\+Distance (\begin{DoxyParamCaption}\item[{int}]{min\+\_\+index,  }\item[{int}]{max\+\_\+index,  }\item[{float}]{ranges\+\_\+array\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})}
+
+
+
+Function for detecting nearest wall in a certain direction. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ranges\+\_\+array\mbox{[}$\,$\mbox{]}} & It\textquotesingle{}s the array of distances received from Laser\+Scan \\
+\hline
+{\em min\+\_\+index} & to select where to start considering the elements of the array \\
+\hline
+{\em max\+\_\+index} & to select where to stop considering the elements of the array\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+min\+\_\+distance The min distance from a wall in the specified direction 
+\end{DoxyReturn}
+\mbox{\Hypertarget{controller_8cpp_af7bed2b9bb79602672e6efa25d3979a2}\label{controller_8cpp_af7bed2b9bb79602672e6efa25d3979a2}} 
+\index{controller.cpp@{controller.cpp}!LasersCallback@{LasersCallback}}
+\index{LasersCallback@{LasersCallback}!controller.cpp@{controller.cpp}}
+\doxysubsubsection{\texorpdfstring{LasersCallback()}{LasersCallback()}}
+{\footnotesize\ttfamily void Lasers\+Callback (\begin{DoxyParamCaption}\item[{const sensor\+\_\+msgs\+::\+Laser\+Scan\+::\+Const\+Ptr \&}]{msg }\end{DoxyParamCaption})}
+
+
+
+Callback for for the for the /\+\_\+scan Topic. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em msg} & contains the outputs of lasers\textquotesingle{} scan\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void
+\end{DoxyReturn}
+This function is called each time the robot lasers detect something. It computes the minimum distances in 3 directions by calling the function \textquotesingle{}Get\+Min\+Distance\textquotesingle{} and puts the results i 3 global variables\+: \textquotesingle{}right\+\_\+dist\textquotesingle{} \textquotesingle{}left\+\_\+dist\textquotesingle{} \textquotesingle{}frontal\+\_\+dist\textquotesingle{} \mbox{\Hypertarget{controller_8cpp_af8dd52fcd76f91189b3acc75a222c9d6}\label{controller_8cpp_af8dd52fcd76f91189b3acc75a222c9d6}} 
+\index{controller.cpp@{controller.cpp}!myCallback@{myCallback}}
+\index{myCallback@{myCallback}!controller.cpp@{controller.cpp}}
+\doxysubsubsection{\texorpdfstring{myCallback()}{myCallback()}}
+{\footnotesize\ttfamily void my\+Callback (\begin{DoxyParamCaption}\item[{const geometry\+\_\+msgs\+::\+Point\+::\+Const\+Ptr \&}]{msg }\end{DoxyParamCaption})}
+
+
+
+Callback for for the for the M\+Y\+\_\+topic\+\_\+send\+\_\+goal topic. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em msg} & contains the goal coordinates (x,y) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void
+\end{DoxyReturn}
+This function is called each time the user insert a new goal in the input conosle. It puts the msg in global variables (\textquotesingle{}x\+\_\+goal, y\+\_\+goal\textquotesingle{}) and makes the robot move towards it by publishing on \textquotesingle{}/move\+\_\+base/goal\textquotesingle{} topic. . \mbox{\Hypertarget{controller_8cpp_a5fdca525d81c3047ccd115083b0de9bb}\label{controller_8cpp_a5fdca525d81c3047ccd115083b0de9bb}} 
+\index{controller.cpp@{controller.cpp}!myCmdCallback@{myCmdCallback}}
+\index{myCmdCallback@{myCmdCallback}!controller.cpp@{controller.cpp}}
+\doxysubsubsection{\texorpdfstring{myCmdCallback()}{myCmdCallback()}}
+{\footnotesize\ttfamily void my\+Cmd\+Callback (\begin{DoxyParamCaption}\item[{const geometry\+\_\+msgs\+::\+Twist\+::\+Const\+Ptr \&}]{msg }\end{DoxyParamCaption})}
+
+
+
+Callback for for the my\+Remapped\+\_\+cmd\+\_\+vel topic. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em msg} & contains the velocity inserted by the user\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void
+\end{DoxyReturn}
+This function is called each time the user inserts a desired velocity via keyboard. it puts the received velocity in a global variable \textquotesingle{}vel\+From\+Teleop\textquotesingle{} and sets \textquotesingle{}changed\+Vel\textquotesingle{} flag to zero \mbox{\Hypertarget{controller_8cpp_a8412a9d0bb93ba362addf6c492b6574c}\label{controller_8cpp_a8412a9d0bb93ba362addf6c492b6574c}} 
+\index{controller.cpp@{controller.cpp}!TeleopCallback@{TeleopCallback}}
+\index{TeleopCallback@{TeleopCallback}!controller.cpp@{controller.cpp}}
+\doxysubsubsection{\texorpdfstring{TeleopCallback()}{TeleopCallback()}}
+{\footnotesize\ttfamily void Teleop\+Callback (\begin{DoxyParamCaption}\item[{const std\+\_\+msgs\+::\+Bool\+::\+Const\+Ptr \&}]{msg }\end{DoxyParamCaption})}
+
+
+
+Callback for for the for the M\+Y\+\_\+topic\+\_\+teleop Topic. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em msg} & contains the boolean representing the selected manual driving mode \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void
+\end{DoxyReturn}
+This function is called each time the user selects a manual driving mode in the input console. It puts the msg in a global variable (\textquotesingle{}manual\+Drive\textquotesingle{}) to enter the if/else statement in the main scope, cancels possible existing goals and resets velocities. 

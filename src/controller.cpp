@@ -1,3 +1,37 @@
+/**
+* \file controller.cpp
+* \brief Controller for the turtlesim
+* \author Claudio Del Gaizo
+* \version 0.1
+* \date 12/01/2022
+*
+*
+* \details
+*
+* Subscribes to: <BR>
+* /move_base/feedback : to have info about robot status
+*
+* /MY_topic_send_goal : to receive a new position goal from the Input Console
+*
+* /MY_topic_teleop : to receive from the Input Console which "manual drive mode" has been selected 
+*
+* /myRemapped_cmd_vel : to receive velocity requested by user via keyboard from the remapped cmd_vel topic
+*
+* /scan : to receive info from robot's lasers
+*
+* Publishes to: <BR>
+* /move_base/goal : to make the robot move towards the Goal position
+*
+* move_base/cancel : to cancel current given goal
+*
+* cmd_vel : to move the robot by keys
+*
+*
+* Description:
+*
+* This node manages the overall behaviour of the robot: it communicates with the input Console through a publish/subscribe algorithm, so that it can 'translate' the user input into the desired motion of the robot. According to which message is published from the input console, a different callback comes into action in this node.
+**/
+
 #include <ros/ros.h> 
 
 //for taking the elapsed time
@@ -31,55 +65,62 @@
 #include "sensor_msgs/LaserScan.h" 
 
 //TIMER in seconds 
-#define TIMEOUT 45 
+#define TIMEOUT 45 ///< threshold for reaching a goal before considering it unreachable
 
 //the position given by "feedback topic" is almost never exactly the same as the one given in input, so through this closeness error it is possible to estimate if the robot reached the goal or not
-#define ERROR 0.3 
+#define ERROR 0.3 ///< error to estimate the reaching of the goal's position
 
 //minimum distance for avoiding collisions
-#define MINDISTANCE 1
+#define MINDISTANCE 1 ///< threshold of minimum distance for avoiding obstacle
 
 
 //global definitions
-ros::Publisher pub1;
-move_base_msgs::MoveBaseActionGoal my_pos; 
+ros::Publisher pub1; ///< global publisher for move_base/goal
+move_base_msgs::MoveBaseActionGoal my_pos;///< message containing goal's coordinates (x,y)
 
-ros::Publisher pubCancel;
-actionlib_msgs::GoalID my_cancel;
+ros::Publisher pubCancel; ///< global publisher for move_base/cancel
+actionlib_msgs::GoalID my_cancel;///< message for cancelling goal
 
-ros::Publisher pubVel;
-geometry_msgs::Twist desiredVel;
+ros::Publisher pubVel; ///< global publisher for cmd_vel
+geometry_msgs::Twist desiredVel;///< message containing desired velocity values (linear(x,y) - angular(z) )
 
 //flag values
-bool goal_reached = 0;
-bool canceled_by_user = 0;
-bool firstTime = 0;
-int manualDrive = 100;
-int changedVel = 0;
+bool goal_reached = 0; ///< global boolean variable to state if goal is reached or not ( 0=no 1=yes)
+bool canceled_by_user = 0;///< global boolean variable to state if goal is canceled by user (0=no 1=yes)
+bool firstTime = 0; ///< global boolean variable to state if a loop is at its first iteration (0=no 1=yes)
+int manualDrive = 100;///< global integer flag to state if manual drive is chosen (0=fully manual 1=assisted manual others=manual not chosen)
+int changedVel = 0;///< global integer variable to state if the velocity has been modified by "assisted driving" (0=no 1=yes)
 
 
-float x_goal ;
-float y_goal ;
+float x_goal ; ///< global float variable for x coordinate of the goal
+float y_goal ; ///< global float variable for y coordinate of the goal
 
-ros::Time  currentTime;
-ros::Time StartTime;
-float errorX;
-float errorY;
+ros::Time currentTime; ///< global ros::Time variable for counting time elapsed
+ros::Time StartTime; ///< global ros::Time variable for counting starting time
+float errorX; ///< global float variable for x error of the position
+float errorY; ///< global float variable for y error of the position
  
 
  //to work with lasers
-float ranges_array[721]; 
-float right_dist =200;
-float left_dist = 200;
-float frontal_dist = 200;
+float ranges_array[721]; ///< global float array containing laser' scan results
+float right_dist =200; ///< global float variable containing min distance from an obstacle at the right of the robot
+float left_dist = 200; ///< global float variable containing min distance from an obstacle at the left of the robot
+float frontal_dist = 200; ///< global float variable containing min distance from an obstacle in front of the robot
 
 
-
-//global variable for saving teleop input received
-geometry_msgs::Twist velFromTeleop;
-
+geometry_msgs::Twist velFromTeleop; ///< global variable for saving teleop input received
  
- //CALLBACK for the myRemapped_cmd_vel topic
+ 
+ /**
+* \brief Callback for for the myRemapped_cmd_vel topic 
+* \param msg contains the velocity inserted by the user
+*
+* \return void
+*
+* This function is called each time the user inserts a desired velocity via keyboard.
+* it puts the received velocity in a global variable 'velFromTeleop' and sets 'changedVel' flag to zero
+*
+**/
 /* ***************************************************************************/
   void myCmdCallback(const geometry_msgs::Twist::ConstPtr& msg)
 {
@@ -90,17 +131,18 @@ geometry_msgs::Twist velFromTeleop;
 }
 
 
+ /**
+* \brief Function for detecting nearest wall in a certain direction. 
+* \param ranges_array[] It's the array of distances received from LaserScan
+* \param min_index to select where to start considering the elements of the array
+* \param max_index to select where to stop considering the elements of the array
+*
+* \return min_distance The min distance from a wall in the specified direction 
+*
+**/
+/* ***************************************************************************/
 float GetMinDistance(int min_index,int max_index, float ranges_array[])
 {
-	/*
-    	 Function for detecting nearest wall in a certain direction.
-    	 
-    	 INPUT: ranges_array[] -> the array of distances received from LaserScan
-    	       min/max_index -> values that allow to consider only portion of the array,
-    	                        so that it only detects walls in a certain direction
-    	                        
-    	 OUTPUT: min_distance -> the min distance from a wall in the specified direction                  
-    	*/
 	float min_distance = 999;
 	for(int i = min_index; i <= max_index; i++)
 	{
@@ -110,7 +152,20 @@ float GetMinDistance(int min_index,int max_index, float ranges_array[])
 	return min_distance;
 }
 
-//CALLBACK for the /_scan Topic
+
+
+ 
+ /**
+* \brief Callback for for the for the /_scan Topic
+* \param msg contains the outputs of lasers' scan
+*
+* \return void
+*
+* This function is called each time the robot lasers detect something.
+* It computes the minimum distances in 3 directions by calling the function 'GetMinDistance' and puts the results i 3 global variables: 'right_dist' 'left_dist' 'frontal_dist'
+*
+**/
+
 /* ***************************************************************************/
 void LasersCallback(const sensor_msgs::LaserScan::ConstPtr& msg)
 {
@@ -133,12 +188,24 @@ void LasersCallback(const sensor_msgs::LaserScan::ConstPtr& msg)
 }
 
 
+
+
+
+ /**
+* \brief Callback for for the for the MY_topic_teleop Topic
+* \param msg contains the boolean representing the selected manual driving mode
+* \return void
+*
+* This function is called each time the user selects a manual driving mode in the input console.
+* It puts the msg in a global variable ('manualDrive') to enter the if/else statement in the main scope, cancels possible existing goals and resets velocities.
+*
+**/
  void TeleopCallback(const std_msgs::Bool::ConstPtr& msg)
 {
 
 int selected_tele = msg->data;
 
-//modify global falg to enter if/else statement in main scope
+//modify global flag to enter if/else statement in main scope
 manualDrive = selected_tele;
 
 //cancel the goal because if the robot is going towards a goal and user selects 2 it stops and waits for a keyboard input
@@ -166,16 +233,15 @@ printf("\nThe assistance will try to avoid you from crushing");
 }
 
   
-  
+ 
+  /**
+* \brief Function for assisting manual drive. 
+* \return void 
+*
+* in case it detects a possible collision it will notify the user and deny the movement, it will repositon the robot in a safier direction and then stop it, waiting for another input of the user. Otherwise it will simply move the robot as the user asked ny publishing on cmd_vel topic. 
+**/ 
 void assistedMovement()
 { 
-	/*
-    	 Function for assisting manual drive.
-    	 
-    	 in case it detects a possible collision it will notify the user and deny the movement,
-    	 it will repositon the robot in a safier direction and then stop it, waiting for another input of the user.
-    	 Otherwise it will simply move the robot as the user asked.              
-    	*/
  
   if(frontal_dist<MINDISTANCE)//possible collision detected
  {
@@ -229,8 +295,15 @@ void assistedMovement()
 
 
 
-
-//CALLBACK for the  Topic MY_topic_send_goal
+ /**
+* \brief Callback for for the for the MY_topic_send_goal topic
+* \param msg contains the goal coordinates (x,y)
+* \return void
+*
+* This function is called each time the user insert a new goal in the input conosle.
+* It puts the msg in global variables ('x_goal, y_goal') and makes the robot move towards it by publishing on '/move_base/goal' topic. .
+*
+**/
 /* ***************************************************************************/
 void myCallback(const geometry_msgs::Point::ConstPtr& msg)
 {
@@ -272,7 +345,16 @@ return;
 
 
  
-//CALLBACK for the /move_base/feedback
+ 
+  /**
+* \brief Callback for for the for the /move_base/feedback topic
+* \param msg contains info about the robot's current status 
+* \return void
+*
+* This function is called each time the robot' status changes.
+* It starts a timer and keeps verifying if the given goal is reached or not: if the timer overcomes a timeout threshold before the robot can reach the goal, the goal is canceled, otherwise it notifies the user of having achieved the desired position.
+*
+**/
 /* ***************************************************************************/
 void CurrentPositionCallback(const move_base_msgs::MoveBaseActionFeedback::ConstPtr& msg)
 {
