@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['firsttime_59',['firstTime',['../controller_8cpp.html#aab321c7149645cc92235ad45b0b7bee4',1,'controller.cpp']]],
-  ['frontal_5fdist_60',['frontal_dist',['../controller_8cpp.html#ae4e9ffb145fbda076a76dd0c4241c087',1,'controller.cpp']]]
+  ['firsttime_61',['firstTime',['../controller_8cpp.html#aab321c7149645cc92235ad45b0b7bee4',1,'controller.cpp']]],
+  ['frontal_5fdist_62',['frontal_dist',['../controller_8cpp.html#ae4e9ffb145fbda076a76dd0c4241c087',1,'controller.cpp']]]
 ];

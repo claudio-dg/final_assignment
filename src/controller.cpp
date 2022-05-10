@@ -26,6 +26,8 @@
 *
 * cmd_vel : to move the robot by keys
 *
+* my_reach : to notify whether the given goal has been reached or not
+*
 *
 * Description:
 *
@@ -83,6 +85,10 @@ actionlib_msgs::GoalID my_cancel;///< message for cancelling goal
 
 ros::Publisher pubVel; ///< global publisher for cmd_vel
 geometry_msgs::Twist desiredVel;///< message containing desired velocity values (linear(x,y) - angular(z) )
+
+ //ADDED FOR RT2:
+ros::Publisher pubReached; ///< global publisher for my_reach
+std_msgs::Bool reached;///< boolean message to notify goal reached 
 
 //flag values
 bool goal_reached = 0; ///< global boolean variable to state if goal is reached or not ( 0=no 1=yes)
@@ -401,6 +407,8 @@ if(elapsed_time > TIMEOUT && goal_reached == 0)
   my_cancel.id = "";
   pubCancel.publish(my_cancel);
   printf("\nGOAL CANCELED\n"); 
+  reached.data=0;
+  pubReached.publish(reached);
 
  }
  //if goal has been reached before timeout was over
@@ -408,6 +416,8 @@ if(elapsed_time > TIMEOUT && goal_reached == 0)
  {
    system("clear");
    printf("\nPOSITION REACHED, please select new destination.. \n");
+   reached.data=1;
+   pubReached.publish(reached);
  } 
 }
 }
@@ -429,8 +439,10 @@ int main (int argc, char **argv)
    //define the publisher for cmd_vel to move the robot by keys
    pubVel = nh.advertise<geometry_msgs::Twist>("cmd_vel", 1);
    
+   //ADDED FOR RT2: define the publisher for my_reach topic to notify jupiter of reached goal
+   pubReached = nh.advertise<std_msgs::Bool>("my_reach", 1);
    
-   
+  
    //Define the subscriber to /move_base/feedback topic for having info about robot status
    ros::Subscriber subFeedback = nh.subscribe("/move_base/feedback", 1, CurrentPositionCallback);
    

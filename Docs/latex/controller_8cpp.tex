@@ -77,6 +77,12 @@ ros\+::\+Publisher \mbox{\hyperlink{controller_8cpp_a22197de54c026ef97f0f9992941
 \mbox{\Hypertarget{controller_8cpp_af77fec157775b93190291d4e941e3cdc}\label{controller_8cpp_af77fec157775b93190291d4e941e3cdc}} 
 geometry\+\_\+msgs\+::\+Twist \mbox{\hyperlink{controller_8cpp_af77fec157775b93190291d4e941e3cdc}{desired\+Vel}}
 \begin{DoxyCompactList}\small\item\em message containing desired velocity values (linear(x,y) -\/ angular(z) ) \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{controller_8cpp_af4b63f7949e44309849aa4cc945b468f}\label{controller_8cpp_af4b63f7949e44309849aa4cc945b468f}} 
+ros\+::\+Publisher \mbox{\hyperlink{controller_8cpp_af4b63f7949e44309849aa4cc945b468f}{pub\+Reached}}
+\begin{DoxyCompactList}\small\item\em global publisher for my\+\_\+reach \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{controller_8cpp_a4e7b2b403f58b3a7ebedb4501612fae7}\label{controller_8cpp_a4e7b2b403f58b3a7ebedb4501612fae7}} 
+std\+\_\+msgs\+::\+Bool \mbox{\hyperlink{controller_8cpp_a4e7b2b403f58b3a7ebedb4501612fae7}{reached}}
+\begin{DoxyCompactList}\small\item\em boolean message to notify goal reached \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{controller_8cpp_ae81a3ec839e173c8759f69fa3e8b5835}\label{controller_8cpp_ae81a3ec839e173c8759f69fa3e8b5835}} 
 bool \mbox{\hyperlink{controller_8cpp_ae81a3ec839e173c8759f69fa3e8b5835}{goal\+\_\+reached}} = 0
 \begin{DoxyCompactList}\small\item\em global boolean variable to state if goal is reached or not ( 0=no 1=yes) \end{DoxyCompactList}\item 
@@ -156,6 +162,8 @@ Publishes to\+: ~\newline
 move\+\_\+base/cancel \+: to cancel current given goal
 
 cmd\+\_\+vel \+: to move the robot by keys
+
+my\+\_\+reach \+: to notify whether the given goal has been reached or not
 
 Description\+:
 

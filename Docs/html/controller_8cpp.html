@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.17"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>RT2 Assignment: src/controller.cpp File Reference</title>
+<title>Assignment Documentation: src/controller.cpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -21,10 +21,10 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">RT2 Assignment
+   <div id="projectname">Assignment Documentation
    &#160;<span id="projectnumber">1.0.3</span>
    </div>
-   <div id="projectbrief">ROS Package for RT2 Assignment</div>
+   <div id="projectbrief">Ros Package for RT2 Assignment</div>
   </td>
  </tr>
  </tbody>
@@ -177,6 +177,14 @@ ros::Publisher&#160;</td><td class="memItemRight" valign="bottom"><a class="el" 
 geometry_msgs::Twist&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="controller_8cpp.html#af77fec157775b93190291d4e941e3cdc">desiredVel</a></td></tr>
 <tr class="memdesc:af77fec157775b93190291d4e941e3cdc"><td class="mdescLeft">&#160;</td><td class="mdescRight">message containing desired velocity values (linear(x,y) - angular(z) ) <br /></td></tr>
 <tr class="separator:af77fec157775b93190291d4e941e3cdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af4b63f7949e44309849aa4cc945b468f"><td class="memItemLeft" align="right" valign="top"><a id="af4b63f7949e44309849aa4cc945b468f"></a>
+ros::Publisher&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="controller_8cpp.html#af4b63f7949e44309849aa4cc945b468f">pubReached</a></td></tr>
+<tr class="memdesc:af4b63f7949e44309849aa4cc945b468f"><td class="mdescLeft">&#160;</td><td class="mdescRight">global publisher for my_reach <br /></td></tr>
+<tr class="separator:af4b63f7949e44309849aa4cc945b468f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e7b2b403f58b3a7ebedb4501612fae7"><td class="memItemLeft" align="right" valign="top"><a id="a4e7b2b403f58b3a7ebedb4501612fae7"></a>
+std_msgs::Bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="controller_8cpp.html#a4e7b2b403f58b3a7ebedb4501612fae7">reached</a></td></tr>
+<tr class="memdesc:a4e7b2b403f58b3a7ebedb4501612fae7"><td class="mdescLeft">&#160;</td><td class="mdescRight">boolean message to notify goal reached <br /></td></tr>
+<tr class="separator:a4e7b2b403f58b3a7ebedb4501612fae7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae81a3ec839e173c8759f69fa3e8b5835"><td class="memItemLeft" align="right" valign="top"><a id="ae81a3ec839e173c8759f69fa3e8b5835"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="controller_8cpp.html#ae81a3ec839e173c8759f69fa3e8b5835">goal_reached</a> = 0</td></tr>
 <tr class="memdesc:ae81a3ec839e173c8759f69fa3e8b5835"><td class="mdescLeft">&#160;</td><td class="mdescRight">global boolean variable to state if goal is reached or not ( 0=no 1=yes) <br /></td></tr>
@@ -257,6 +265,7 @@ geometry_msgs::Twist&#160;</td><td class="memItemRight" valign="bottom"><a class
  /move_base/goal : to make the robot move towards the Goal position</p>
 <p>move_base/cancel : to cancel current given goal</p>
 <p>cmd_vel : to move the robot by keys</p>
+<p>my_reach : to notify whether the given goal has been reached or not</p>
 <p>Description:</p>
 <p>This node manages the overall behaviour of the robot: it communicates with the input Console through a publish/subscribe algorithm, so that it can 'translate' the user input into the desired motion of the robot. According to which message is published from the input console, a different callback comes into action in this node. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
