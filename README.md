@@ -251,9 +251,13 @@ print controller console introduction
 
 ## RT2 Assignment
  
+For this assigment we had to : 
 
-
- 
+1. Document our code using Doxygen. 
+	The result of this part is contained in the '''Docs''' Folder.
+	open index.html to see
+2. let the user drive the robot with the keyboard
+3. let the user drive the robot assisting them to avoid collisions
 	
 
 	
