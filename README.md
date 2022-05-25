@@ -263,7 +263,7 @@ For this assigment we had to :
 
 	```
 3. make a statistical analysis on the first assignment of the course.
-	The result of this part are contained in a .pdf file and a matlab script that are sent separately to the professor as attachment to the mail.
+	The results of this part are contained in a .pdf file and a matlab script that are sent separately to the professor as attachment to the mail.
 	
 
 	
