@@ -256,10 +256,10 @@ For this assigment we had to :
 1. Document our code using Doxygen. 
 	The result of this part is contained in the '''Docs''' Folder.
 	open index.html to see the documentation page.
-2. create a jupyter notebook to replace the user interface.
-	The result of this part is contained in the '''Assignment_notebook.ipyn''' file
+2. create a jupyter notebook to replace the user interface and to show info about the robot through real time plots.
+	The result of this part is contained in the '''Assignment_notebook.ipyn''' file.
 3. make a statistical analysis on the first assignment of the course.
-	The result of this part are contained in a .pdf file and a matlab script that are sent separately to the professor as attachment to the mail
+	The result of this part are contained in a .pdf file and a matlab script that are sent separately to the professor as attachment to the mail.
 	
 
 	
