@@ -1,7 +1,8 @@
-Research Track Final Assignment
+Research Track Final Assignment + RT2 Assignment
 ================================
 
-This repository contains the result of my personal work for the final Assignment of the course.
+This repository contains the result of my personal work for the final Assignment of the course, along with the assignment part related to RT2 course.
+
 
 The goal of this assignment is to Develop a software architecture for the control of the robot in the environment. The software relies on the move_base and gmapping packages for localizing the robot and plan the motion.
 The architecture should be able to get the user request, and let the robot execute one of the following behaviors
@@ -25,7 +26,7 @@ Table of contents
 * [Gazebo and Rviz Maps](#gazebo-and-rviz-maps)
 * [Project structure and behaviour description](#project-structure-and-behaviour-description)
 * [PseudoCode](#pseudocode)
-
+* [RT2 Assignment](#rt2-assignment)
 
 ## Setup
 
@@ -248,7 +249,7 @@ print controller console introduction
 ```
 
 
-
+## RT2 Assignment
  
 
 
