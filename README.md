@@ -255,7 +255,7 @@ For this assigment we had to :
 
 1. Document our code using Doxygen. 
 	The result of this part is contained in the ```Docs``` Folder.
-	 Open ```index.html``` to see the documentation page.
+	 Please clone the repository and open ```index.html``` with a browser to see the documentation page.
 2. create a jupyter notebook to replace the user interface and to show info about the robot through real time plots. 
 	The result of this part is contained in the ```Assignment_notebook.ipyn``` file. Before ruuning the notebook please make sure to run 
 	```bash
